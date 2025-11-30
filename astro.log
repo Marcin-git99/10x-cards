@@ -1,0 +1,69 @@
+nohup: ignoring input
+
+> 10x-cards@0.0.1 dev
+> astro dev
+
+[2m12:40:37[22m [34m[@astrojs/node][39m Enabling sessions with filesystem storage
+[2m12:40:37[22m [34m[types][39m Generated [2m1ms[22m
+[2m12:40:37[22m [34m[content][39m Syncing content
+[2m12:40:37[22m [34m[content][39m Synced content
+
+[42m[1m astro [22m[49m [32mv5.15.3[39m [2mready in[22m 926 [2mms[22m
+
+[2m┃[22m Local    [36mhttp://localhost:4321/[39m
+[2m┃[22m Network  [2muse --host to expose[22m
+
+[2m12:40:37[22m [32mwatching for file changes...[39m
+Supabase URL: http://127.0.0.1:54321
+Anon key: sb_publishable_ACJWlzQHlZjBrEguHvfOxg_3BJgxAaH
+Service key: sb_secret_N7UND0UgjKTVK-Uodkm0Hg_xSvEMPvz
+[Middleware] GET http://localhost:4321/
+[2m12:40:48[22m [34m[200][39m / [2m1334ms[22m
+[Middleware] GET http://localhost:4321/
+[2m12:41:34[22m [34m[200][39m / [2m35ms[22m
+[Middleware] GET http://localhost:4321/favicon.svg
+[2m12:41:35[22m [33m[404][39m /favicon.svg [2m4ms[22m
+[2m12:41:59[22m [34m[watch][39m astro.log
+[2m12:41:59[22m [34m[watch][39m astro.log
+[Middleware] GET http://localhost:4321/
+[2m12:44:10[22m [34m[200][39m / [2m21ms[22m
+[2m12:44:10[22m [34m[watch][39m astro.log
+[2m12:44:10[22m [34m[watch][39m astro.log
+[2m12:45:44[22m [34m[watch][39m /src/components/ButtonDemo.tsx, /src/layouts/Layout.astro?astro&type=style&index=0&lang.css
+[2m12:45:44[22m [34m[watch][39m src/components/ButtonDemo.tsx
+[2m12:45:55[22m [34m[watch][39m astro.log
+[2m12:45:55[22m [34m[watch][39m astro.log
+[2m12:46:10[22m [34m[watch][39m /src/components/ButtonDemo.tsx, /src/layouts/Layout.astro?astro&type=style&index=0&lang.css
+[2m12:46:10[22m [34m[watch][39m src/components/ButtonDemo.tsx
+[2m12:46:22[22m [34m[watch][39m astro.log
+[2m12:46:22[22m [34m[watch][39m astro.log
+[Middleware] GET http://localhost:4321/
+[2m12:46:22[22m [34m[watch][39m astro.log
+[2m12:46:22[22m [34m[watch][39m astro.log
+[2m12:46:23[22m [34m[200][39m / [2m126ms[22m
+[2m12:46:23[22m [34m[watch][39m astro.log
+[2m12:46:23[22m [34m[watch][39m astro.log
+[Middleware] GET http://localhost:4321/generate
+[2m12:46:27[22m [34m[200][39m /generate [2m42ms[22m
+[2m12:46:27[22m [34m[watch][39m astro.log
+[2m12:46:27[22m [34m[watch][39m astro.log
+[2m12:46:40[22m [34m[watch][39m tailwind.config.js
+[2m12:46:40[22m [34m[watch][39m tailwind.config.js
+[2m12:46:40[22m [34m[watch][39m astro.log
+[2m12:46:40[22m [34m[watch][39m astro.log
+[2m12:46:40[22m [34m[watch][39m tailwind.config.js
+[2m12:46:40[22m [34m[watch][39m tailwind.config.js
+[2m12:46:40[22m [34m[watch][39m astro.log
+[2m12:46:40[22m [34m[watch][39m astro.log
+[2m12:46:44[22m [34m[watch][39m tailwind.config.js
+[2m12:46:44[22m [34m[watch][39m tailwind.config.js
+[2m12:46:44[22m [34m[watch][39m astro.log
+[2m12:46:44[22m [34m[watch][39m astro.log
+[2m12:47:02[22m [34m[watch][39m /src/components/ButtonDemo.tsx, /src/layouts/Layout.astro?astro&type=style&index=0&lang.css
+[2m12:47:02[22m [34m[watch][39m src/components/ButtonDemo.tsx
+[2m12:48:21[22m [34m[watch][39m /src/components/BulkSaveButton.tsx, /src/layouts/Layout.astro?astro&type=style&index=0&lang.css
+[2m12:48:21[22m [34m[watch][39m src/components/BulkSaveButton.tsx
+[2m12:49:47[22m [34m[watch][39m /src/components/BulkSaveButton.tsx, /src/layouts/Layout.astro?astro&type=style&index=0&lang.css
+[2m12:49:47[22m [34m[watch][39m src/components/BulkSaveButton.tsx
+[2m12:49:51[22m [34m[watch][39m astro.log
+[2m12:49:51[22m [34m[watch][39m astro.log

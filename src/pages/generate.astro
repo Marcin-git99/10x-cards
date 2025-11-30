@@ -1,0 +1,28 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { GenerateView } from '../components/GenerateView';
+
+// Protected route - redirect to login if not authenticated
+// TODO: Add authentication check when auth is implemented
+---
+
+<Layout title="Generowanie fiszek AI - 10x Cards">
+  <main class="min-h-screen bg-gray-50">
+    <!-- Page Header -->
+    <header class="bg-white shadow-sm border-b">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div class="max-w-4xl mx-auto">
+          <h1 class="text-3xl font-bold text-gray-900">Generowanie fiszek AI</h1>
+          <p class="mt-2 text-lg text-gray-600">
+            Wprowadź tekst, a sztuczna inteligencja wygeneruje dla Ciebie propozycje fiszek do nauki.
+          </p>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content with React Component -->
+    <div class="px-4 sm:px-6 lg:px-8 py-8">
+      <GenerateView client:load />
+    </div>
+  </main>
+</Layout>
