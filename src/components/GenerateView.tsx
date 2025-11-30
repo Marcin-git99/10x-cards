@@ -1,10 +1,14 @@
 import React, { useCallback, useEffect } from 'react';
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Label } from "@/components/ui/label";
 import { TextAreaInput } from './TextAreaInput';
 import { GenerateButton } from './GenerateButton';
 import { ProposalsList } from './ProposalsList';
 import { BulkSaveButton } from './BulkSaveButton';
+import { SkeletonLoader } from './SkeletonLoader';
 import { useGenerateFlashcards } from './hooks/useGenerateFlashcards';
 import { useTextValidation, canGenerateFromText } from './hooks/useTextValidation';
+import { useSaveProgress } from './hooks/useSaveProgress';
 
 export interface GenerateViewProps {
   className?: string;
@@ -19,6 +23,7 @@ export const GenerateView: React.FC<GenerateViewProps> = ({
 }) => {
   const { state, bulkSelectionState, actions } = useGenerateFlashcards();
   const textValidation = useTextValidation(state.sourceText);
+  const { progress, startSave, updateProgress, completeSave, failSave, resetProgress } = useSaveProgress();
 
   // Auto-scroll to results after generation
   useEffect(() => {
@@ -51,23 +56,40 @@ export const GenerateView: React.FC<GenerateViewProps> = ({
   }, [textValidation.isValid, state.isGenerating, state.sourceText, actions]);
 
   // Handle saving flashcards
-  const handleSave = useCallback(async (mode: 'selected' | 'all') => {
+  const handleSave = useCallback(async (mode: 'selected' | 'all' | 'custom') => {
     try {
+      // Determine total count for progress
+      const totalToSave = mode === 'selected' 
+        ? bulkSelectionState.selectedCount 
+        : state.proposals.length;
+      
+      startSave(totalToSave);
+      
+      // Simulate progress updates if needed, or just rely on the API call duration
+      // For now, we just wait for the API call
+      
       const savedFlashcards = await actions.saveFlashcards(mode);
+      
+      completeSave();
       
       // Show success message and optionally redirect
       if (savedFlashcards && savedFlashcards.length > 0) {
         // Could show a toast notification here
         console.log(`Successfully saved ${savedFlashcards.length} flashcards`);
         
-        // Optionally redirect to flashcards page after successful save
-        // window.location.href = '/flashcards';
+        // Reset progress after a delay
+        setTimeout(() => {
+          resetProgress();
+          // Optionally redirect to flashcards page after successful save
+          window.location.href = '/flashcards';
+        }, 1500);
       }
     } catch (error) {
       console.error('Save failed:', error);
-      // Error is handled by the hook
+      failSave(error instanceof Error ? error.message : 'Błąd zapisu');
+      // Error is also handled by the hook
     }
-  }, [actions]);
+  }, [actions, bulkSelectionState.selectedCount, state.proposals.length, startSave, completeSave, failSave, resetProgress]);
 
   // Determine button disabled state and reason
   const generateDisabled = !textValidation.isValid || state.isGenerating;
@@ -82,27 +104,25 @@ export const GenerateView: React.FC<GenerateViewProps> = ({
     <div className={`max-w-4xl mx-auto space-y-8 ${className}`}>
       {/* Error display */}
       {state.error && (
-        <div className="bg-red-50 border-l-4 border-red-400 p-4 rounded-lg">
-          <div className="flex items-center">
-            <svg className="w-5 h-5 text-red-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <div>
-              <h3 className="text-red-800 font-medium">Wystąpił błąd</h3>
-              <p className="text-red-700 text-sm mt-1">{state.error}</p>
-            </div>
+        <Alert variant="destructive">
+          <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <AlertTitle>Wystąpił błąd</AlertTitle>
+          <AlertDescription className="flex items-center justify-between">
+            <span>{state.error}</span>
             <button
               type="button"
               onClick={actions.clearError}
-              className="ml-auto text-red-400 hover:text-red-600 p-1"
+              className="text-destructive hover:text-destructive/80 p-1"
               aria-label="Zamknij komunikat o błędzie"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
-          </div>
-        </div>
+          </AlertDescription>
+        </Alert>
       )}
 
       {/* Text Input Section */}
@@ -110,10 +130,10 @@ export const GenerateView: React.FC<GenerateViewProps> = ({
         <div className="p-6">
           <div className="space-y-4">
             <div>
-              <label htmlFor="source-text" className="block text-lg font-medium text-gray-900 mb-2">
+              <Label htmlFor="source-text" className="block text-lg font-medium mb-2">
                 Tekst źródłowy
-              </label>
-              <p className="text-sm text-gray-600 mb-4">
+              </Label>
+              <p className="text-sm text-muted-foreground mb-4">
                 Wklej tutaj materiał do nauki. Tekst musi zawierać od 1000 do 10000 znaków.
               </p>
             </div>
@@ -139,28 +159,20 @@ export const GenerateView: React.FC<GenerateViewProps> = ({
         </div>
       </section>
 
-      {/* Loading Overlay */}
+      {/* Loading State */}
       {state.isGenerating && (
-        <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-sm mx-auto shadow-xl">
-            <div className="text-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-              <h3 className="text-lg font-medium text-gray-900 mb-2">
-                Generowanie fiszek...
-              </h3>
-              <p className="text-sm text-gray-600 mb-4">
-                Sztuczna inteligencja analizuje Twój tekst i tworzy propozycje fiszek.
-              </p>
-              <p className="text-xs text-gray-500">
-                To może potrwać do 30 sekund
-              </p>
-            </div>
+        <section className="space-y-4">
+          <div className="flex items-center justify-center py-4">
+            <span className="text-sm text-muted-foreground animate-pulse">
+              Sztuczna inteligencja analizuje Twój tekst i tworzy propozycje fiszek...
+            </span>
           </div>
-        </div>
+          <SkeletonLoader count={3} />
+        </section>
       )}
 
       {/* Generation Results Section */}
-      {(state.proposals.length > 0 || state.generationResult) && (
+      {(state.proposals.length > 0 || state.generationResult) && !state.isGenerating && (
         <section id="generation-results" className="scroll-mt-8">
           <div className="bg-white rounded-lg shadow-sm border border-gray-200">
             {/* Results Header */}
@@ -202,6 +214,7 @@ export const GenerateView: React.FC<GenerateViewProps> = ({
                       totalCount={state.proposals.length}
                       onSave={handleSave}
                       loading={state.isSaving}
+                      progress={progress}
                       disabled={state.isSaving}
                     />
                   </div>

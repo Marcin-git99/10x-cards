@@ -48,6 +48,10 @@ export const useTextValidation = (
 
   // Calculate validation state based on debounced text
   const validation = useMemo((): ValidationState => {
+    // Use live length for character count, but debounced text for validation
+    // Ideally we should return both, but to keep interface compatible we'll use debounced for now
+    // and let the consumer handle live updates via text.length
+    
     const charCount = debouncedText.length;
     
     // No validation for empty text initially
@@ -65,7 +69,7 @@ export const useTextValidation = (
       return {
         isValid: false,
         errorMessage: `Tekst musi mieć co najmniej ${minLength} znaków`,
-        charCount,
+        charCount, // This will lag behind typing due to debounce
         showError,
       };
     }
@@ -88,6 +92,10 @@ export const useTextValidation = (
     };
   }, [debouncedText, minLength, maxLength, showError]);
 
+  // Return validation state mixed with live character count if needed,
+  // but for now we just return the computed validation state.
+  // The consumer (TextAreaInput) is already using value.length for the counter,
+  // so the "laggy" charCount here is only used for internal validation logic state.
   return validation;
 };
 

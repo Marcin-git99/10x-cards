@@ -3,7 +3,13 @@ import Layout from '../layouts/Layout.astro';
 import { GenerateView } from '../components/GenerateView';
 
 // Protected route - redirect to login if not authenticated
-// TODO: Add authentication check when auth is implemented
+const { supabase } = Astro.locals;
+// Tymczasowo wyłączamy sprawdzanie auth po stronie serwera dla celów developmentu
+// ponieważ middleware nie obsługuje jeszcze autentykacji SSR z ciasteczkami
+// const { data: { user } } = await supabase.auth.getUser();
+// if (!user) {
+//   return Astro.redirect('/login');
+// }
 ---
 
 <Layout title="Generowanie fiszek AI - 10x Cards">

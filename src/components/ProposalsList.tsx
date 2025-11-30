@@ -1,5 +1,7 @@
 import React, { useCallback, useRef, useEffect } from 'react';
 import { ProposalCard } from './ProposalCard';
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 import type { ProposalWithState, SelectionMode, BulkSelectionState } from './hooks/useGenerateFlashcards';
 
 export interface ProposalsListProps {
@@ -36,11 +38,11 @@ export const ProposalsList: React.FC<ProposalsListProps> = ({
   }, [proposals.length]);
 
   // Handle bulk selection
-  const handleBulkSelectAll = useCallback(() => {
+  const handleBulkSelectAll = useCallback((checked: boolean | string) => {
     if (!disabled) {
-      onBulkSelect(bulkSelectionState.allSelected ? 'none' : 'all');
+      onBulkSelect(checked === true ? 'all' : 'none');
     }
-  }, [disabled, bulkSelectionState.allSelected, onBulkSelect]);
+  }, [disabled, onBulkSelect]);
 
   // Handle keyboard navigation
   const handleKeyDown = useCallback((event: React.KeyboardEvent) => {
@@ -92,7 +94,7 @@ export const ProposalsList: React.FC<ProposalsListProps> = ({
           <h3 className="text-lg font-medium text-gray-900 mb-2">
             Brak propozycji fiszek
           </h3>
-          <p className="text-gray-600">
+          <p className="text-muted-foreground">
             Wprowadź tekst i kliknij "Generuj fiszki AI", aby zobaczyć propozycje.
           </p>
         </div>
@@ -113,24 +115,20 @@ export const ProposalsList: React.FC<ProposalsListProps> = ({
       {/* Header with bulk selection */}
       <div className="flex items-center justify-between p-4 bg-gray-50 border border-gray-200 rounded-lg">
         <div className="flex items-center gap-4">
-          <label className="flex items-center">
-            <input
-              type="checkbox"
-              checked={bulkSelectionState.allSelected}
-              ref={input => {
-                if (input) input.indeterminate = bulkSelectionState.indeterminate;
-              }}
-              onChange={handleBulkSelectAll}
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="bulk-select-checkbox"
+              checked={bulkSelectionState.indeterminate ? 'indeterminate' : bulkSelectionState.allSelected}
+              onCheckedChange={handleBulkSelectAll}
               disabled={disabled}
-              className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 disabled:opacity-50"
               aria-describedby="bulk-select-status"
             />
-            <span className="ml-2 text-sm font-medium text-gray-700">
+            <Label htmlFor="bulk-select-checkbox" className="text-sm font-medium text-gray-700 cursor-pointer">
               Zaznacz wszystkie
-            </span>
-          </label>
+            </Label>
+          </div>
           
-          <div className="flex items-center gap-2 text-sm text-gray-600">
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <span>|</span>
             <button
               type="button"
@@ -155,7 +153,7 @@ export const ProposalsList: React.FC<ProposalsListProps> = ({
         <div className="flex items-center gap-2">
           <span 
             id="bulk-select-status"
-            className="text-sm text-gray-600"
+            className="text-sm text-muted-foreground"
             aria-live="polite"
           >
             {bulkSelectionState.selectedCount} z {proposals.length} zaznaczonych
@@ -166,7 +164,7 @@ export const ProposalsList: React.FC<ProposalsListProps> = ({
       {/* Help text for keyboard shortcuts */}
       <div 
         id="proposals-help"
-        className="text-xs text-gray-500 px-1"
+        className="text-xs text-muted-foreground px-1"
       >
         Skróty klawiszowe: Ctrl+A (zaznacz wszystkie), Ctrl+Shift+A (odznacz wszystkie), Ctrl+I (odwróć zaznaczenie)
       </div>
@@ -195,7 +193,7 @@ export const ProposalsList: React.FC<ProposalsListProps> = ({
 
       {/* Summary footer */}
       <div className="text-center pt-6 pb-4">
-        <p className="text-sm text-gray-600">
+        <p className="text-sm text-muted-foreground">
           Pokazano {proposals.length} {proposals.length === 1 ? 'propozycję' : 'propozycji'} fiszek
           {bulkSelectionState.selectedCount > 0 && (
             <span className="ml-2 text-blue-600 font-medium">

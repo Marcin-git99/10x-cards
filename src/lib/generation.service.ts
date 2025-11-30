@@ -1,4 +1,4 @@
-import { createHash } from 'crypto';
+import { createHash } from 'node:crypto';
 import type { SupabaseClient } from '@/db/supabase.client';
 import { supabaseServiceClient } from '@/db/supabase.client';
 import type { FlashcardProposalDto, GenerationCreateResponseDto } from '../types';

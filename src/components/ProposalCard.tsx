@@ -1,4 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 import type { ProposalWithState } from './hooks/useGenerateFlashcards';
 
 export interface ProposalCardProps {
@@ -36,11 +39,11 @@ export const ProposalCard: React.FC<ProposalCardProps> = ({
   const isValid = frontValid && backValid;
 
   // Toggle selection
-  const handleToggleSelection = useCallback(() => {
+  const handleToggleSelection = useCallback((checked: boolean | string) => {
     if (!disabled) {
-      onUpdate({ isSelected: !proposal.isSelected });
+      onUpdate({ isSelected: checked === true });
     }
-  }, [disabled, proposal.isSelected, onUpdate]);
+  }, [disabled, onUpdate]);
 
   // Enter edit mode
   const handleEdit = useCallback(() => {
@@ -107,36 +110,33 @@ export const ProposalCard: React.FC<ProposalCardProps> = ({
     >
       {/* Selection checkbox */}
       <div className="flex items-start gap-3">
-        <label className="flex items-center mt-1">
-          <input
-            type="checkbox"
+        <div className="flex items-center mt-1">
+          <Checkbox
             checked={proposal.isSelected}
-            onChange={handleToggleSelection}
+            onCheckedChange={handleToggleSelection}
             disabled={disabled}
-            className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 disabled:opacity-50"
             aria-label={`Zaznacz propozycję fiszki: ${displayFront.slice(0, 50)}...`}
           />
-        </label>
+        </div>
 
         <div className="flex-1 min-w-0">
           {/* Front side */}
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <Label className="block mb-2 text-muted-foreground">
               Przód fiszki
               {isEdited && <span className="text-blue-600 text-xs ml-1">(edytowane)</span>}
-            </label>
+            </Label>
             {proposal.isEditing ? (
               <div className="space-y-1">
-                <textarea
+                <Textarea
                   ref={frontInputRef}
                   value={editedFront}
                   onChange={(e) => setEditedFront(e.target.value)}
                   rows={2}
                   maxLength={200}
                   className={`
-                    w-full p-3 text-sm border rounded-lg resize-none transition-colors
-                    ${frontValid ? 'border-gray-300 focus:border-blue-500' : 'border-red-300 focus:border-red-500'}
-                    focus:ring-2 focus:ring-blue-500 focus:ring-opacity-20 focus:outline-none
+                    w-full p-3 text-sm rounded-lg resize-none
+                    ${frontValid ? 'border-gray-300' : 'border-destructive focus-visible:ring-destructive'}
                   `}
                   placeholder="Wprowadź tekst dla przodu fiszki..."
                   aria-describedby={`front-char-count-${proposal.id} ${!frontValid ? `front-error-${proposal.id}` : ''}`}
@@ -144,14 +144,14 @@ export const ProposalCard: React.FC<ProposalCardProps> = ({
                 <div className="flex justify-between items-center">
                   <span
                     id={`front-char-count-${proposal.id}`}
-                    className={`text-xs ${editedFront.length > 200 ? 'text-red-600' : 'text-gray-500'}`}
+                    className={`text-xs ${editedFront.length > 200 ? 'text-destructive' : 'text-muted-foreground'}`}
                   >
                     {editedFront.length}/200 znaków
                   </span>
                   {!frontValid && (
                     <span
                       id={`front-error-${proposal.id}`}
-                      className="text-xs text-red-600"
+                      className="text-xs text-destructive"
                       role="alert"
                     >
                       {editedFront.trim().length === 0 ? 'Pole nie może być puste' : 'Maksymalnie 200 znaków'}
@@ -160,29 +160,28 @@ export const ProposalCard: React.FC<ProposalCardProps> = ({
                 </div>
               </div>
             ) : (
-              <div className="p-3 bg-gray-50 border border-gray-200 rounded-lg">
-                <p className="text-sm text-gray-900 whitespace-pre-wrap">{displayFront}</p>
+              <div className="p-3 bg-background border border-input rounded-lg">
+                <p className="text-sm whitespace-pre-wrap">{displayFront}</p>
               </div>
             )}
           </div>
 
           {/* Back side */}
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <Label className="block mb-2 text-muted-foreground">
               Tył fiszki
-            </label>
+            </Label>
             {proposal.isEditing ? (
               <div className="space-y-1">
-                <textarea
+                <Textarea
                   ref={backInputRef}
                   value={editedBack}
                   onChange={(e) => setEditedBack(e.target.value)}
                   rows={3}
                   maxLength={500}
                   className={`
-                    w-full p-3 text-sm border rounded-lg resize-none transition-colors
-                    ${backValid ? 'border-gray-300 focus:border-blue-500' : 'border-red-300 focus:border-red-500'}
-                    focus:ring-2 focus:ring-blue-500 focus:ring-opacity-20 focus:outline-none
+                    w-full p-3 text-sm rounded-lg resize-none
+                    ${backValid ? 'border-gray-300' : 'border-destructive focus-visible:ring-destructive'}
                   `}
                   placeholder="Wprowadź tekst dla tyłu fiszki..."
                   aria-describedby={`back-char-count-${proposal.id} ${!backValid ? `back-error-${proposal.id}` : ''}`}
@@ -190,14 +189,14 @@ export const ProposalCard: React.FC<ProposalCardProps> = ({
                 <div className="flex justify-between items-center">
                   <span
                     id={`back-char-count-${proposal.id}`}
-                    className={`text-xs ${editedBack.length > 500 ? 'text-red-600' : 'text-gray-500'}`}
+                    className={`text-xs ${editedBack.length > 500 ? 'text-destructive' : 'text-muted-foreground'}`}
                   >
                     {editedBack.length}/500 znaków
                   </span>
                   {!backValid && (
                     <span
                       id={`back-error-${proposal.id}`}
-                      className="text-xs text-red-600"
+                      className="text-xs text-destructive"
                       role="alert"
                     >
                       {editedBack.trim().length === 0 ? 'Pole nie może być puste' : 'Maksymalnie 500 znaków'}
@@ -206,8 +205,8 @@ export const ProposalCard: React.FC<ProposalCardProps> = ({
                 </div>
               </div>
             ) : (
-              <div className="p-3 bg-gray-50 border border-gray-200 rounded-lg">
-                <p className="text-sm text-gray-900 whitespace-pre-wrap">{displayBack}</p>
+              <div className="p-3 bg-background border border-input rounded-lg">
+                <p className="text-sm whitespace-pre-wrap">{displayBack}</p>
               </div>
             )}
           </div>
@@ -220,7 +219,7 @@ export const ProposalCard: React.FC<ProposalCardProps> = ({
                   type="button"
                   onClick={handleCancel}
                   disabled={disabled}
-                  className="px-3 py-1.5 text-sm text-gray-600 hover:text-gray-800 border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground border border-input rounded-md hover:bg-accent disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   Anuluj
                 </button>
@@ -228,7 +227,7 @@ export const ProposalCard: React.FC<ProposalCardProps> = ({
                   type="button"
                   onClick={handleSave}
                   disabled={disabled || !isValid}
-                  className="px-3 py-1.5 text-sm text-white bg-green-600 hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed rounded-md transition-colors"
+                  className="px-3 py-1.5 text-sm text-primary-foreground bg-green-600 hover:bg-green-700 disabled:bg-muted disabled:cursor-not-allowed rounded-md transition-colors"
                   title={!isValid ? 'Popraw błędy walidacji przed zapisaniem' : 'Zapisz zmiany (Ctrl+S)'}
                 >
                   Zapisz
