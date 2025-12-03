@@ -1,11 +1,11 @@
 import React, { useCallback, useEffect } from 'react';
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Label } from "@/components/ui/label";
 import { TextAreaInput } from './TextAreaInput';
 import { GenerateButton } from './GenerateButton';
 import { ProposalsList } from './ProposalsList';
 import { BulkSaveButton } from './BulkSaveButton';
 import { SkeletonLoader } from './SkeletonLoader';
+import { ErrorNotification } from './ErrorNotification';
 import { useGenerateFlashcards } from './hooks/useGenerateFlashcards';
 import { useTextValidation, canGenerateFromText } from './hooks/useTextValidation';
 import { useSaveProgress } from './hooks/useSaveProgress';
@@ -104,25 +104,10 @@ export const GenerateView: React.FC<GenerateViewProps> = ({
     <div className={`max-w-4xl mx-auto space-y-8 ${className}`}>
       {/* Error display */}
       {state.error && (
-        <Alert variant="destructive">
-          <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-          <AlertTitle>Wystąpił błąd</AlertTitle>
-          <AlertDescription className="flex items-center justify-between">
-            <span>{state.error}</span>
-            <button
-              type="button"
-              onClick={actions.clearError}
-              className="text-destructive hover:text-destructive/80 p-1"
-              aria-label="Zamknij komunikat o błędzie"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-          </AlertDescription>
-        </Alert>
+        <ErrorNotification
+          message={state.error}
+          onDismiss={actions.clearError}
+        />
       )}
 
       {/* Text Input Section */}

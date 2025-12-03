@@ -65,7 +65,11 @@ export const GenerateButton: React.FC<GenerateButtonProps> = ({
         type="button"
         onClick={handleClick}
         disabled={disabled || loading}
-        className={cn("relative transition-all duration-200", className)}
+        className={cn(
+          "relative transition-all duration-200",
+          "w-full sm:w-auto", // Responsive: full width on mobile, auto on desktop
+          className
+        )}
         size={sizeMap[size]}
         aria-label={getAriaLabel()}
         aria-describedby={disabled && disabledReason ? 'generate-button-tooltip' : undefined}
