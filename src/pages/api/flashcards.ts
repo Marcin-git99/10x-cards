@@ -1,8 +1,60 @@
 import type { APIRoute } from 'astro';
 import { z } from 'zod';
-import { createFlashcards } from '../../lib/flashcard.service';
+import { createFlashcards, getFlashcards } from '../../lib/flashcard.service';
 import type { FlashcardsCreateCommand, FlashcardDto } from '../../types';
 import { DEFAULT_USER_ID } from '@/db/supabase.client';
+
+/**
+ * Endpoint GET /api/flashcards
+ * 
+ * Pobiera fiszki użytkownika z opcjonalną paginacją
+ * Query params: page (default: 1), limit (default: 20)
+ */
+export const GET: APIRoute = async ({ request, locals }) => {
+  try {
+    console.log('GET /api/flashcards - Otrzymano żądanie');
+    
+    const userId = DEFAULT_USER_ID;
+    const url = new URL(request.url);
+    const page = parseInt(url.searchParams.get('page') || '1', 10);
+    const limit = parseInt(url.searchParams.get('limit') || '20', 10);
+    
+    // Walidacja parametrów
+    if (page < 1 || limit < 1 || limit > 100) {
+      return new Response(
+        JSON.stringify({ 
+          error: 'Bad Request', 
+          message: 'Nieprawidłowe parametry paginacji' 
+        }),
+        { status: 400, headers: { 'Content-Type': 'application/json' } }
+      );
+    }
+    
+    const result = await getFlashcards(locals.supabase, userId, page, limit);
+    
+    return new Response(
+      JSON.stringify({
+        data: result.flashcards,
+        pagination: {
+          page,
+          limit,
+          total: result.total
+        }
+      }),
+      { status: 200, headers: { 'Content-Type': 'application/json' } }
+    );
+    
+  } catch (error) {
+    console.error('Błąd podczas pobierania fiszek:', error);
+    return new Response(
+      JSON.stringify({ 
+        error: 'Internal Server Error', 
+        message: 'Wystąpił błąd podczas pobierania fiszek' 
+      }),
+      { status: 500, headers: { 'Content-Type': 'application/json' } }
+    );
+  }
+};
 
 // Schema walidacji dla pojedynczej fiszki
 const FlashcardCreateSchema = z.object({

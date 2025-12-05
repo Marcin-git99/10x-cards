@@ -1,0 +1,44 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { FlashcardsView } from '../components/FlashcardsView';
+
+// Protected route - redirect to login if not authenticated
+// Tymczasowo wyłączamy sprawdzanie auth podczas developmentu
+// const { supabase } = Astro.locals;
+// const { data: { user } } = await supabase.auth.getUser();
+// if (!user) {
+//   return Astro.redirect('/login');
+// }
+---
+
+<Layout title="Moje fiszki - 10x Cards">
+  <main class="min-h-screen bg-gray-50">
+    <!-- Page Header -->
+    <header class="bg-white shadow-sm border-b">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div>
+            <h1 class="text-3xl font-bold text-gray-900">Moje fiszki</h1>
+            <p class="mt-2 text-lg text-gray-600">
+              Przeglądaj, edytuj i zarządzaj swoimi fiszkami
+            </p>
+          </div>
+          <a 
+            href="/generate" 
+            class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors"
+          >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+            Generuj z AI
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content with React Component -->
+    <div class="px-4 sm:px-6 lg:px-8 py-8">
+      <FlashcardsView client:load />
+    </div>
+  </main>
+</Layout>

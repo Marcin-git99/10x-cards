@@ -4,6 +4,7 @@ import type {
   FlashcardCreateDto, 
   FlashcardDto, 
   FlashcardInsert,
+  FlashcardUpdateDto,
   Flashcard
 } from '../types';
 
@@ -54,6 +55,56 @@ function mapToDto(row: Flashcard): FlashcardDto {
     generation_id: row.generation_id,
     created_at: row.created_at,
     updated_at: row.updated_at
+  };
+}
+
+/**
+ * Pobiera fiszki użytkownika z paginacją
+ */
+export async function getFlashcards(
+  supabase: SupabaseClient,
+  userId: string,
+  page: number = 1,
+  limit: number = 20
+): Promise<{ flashcards: FlashcardDto[]; total: number }> {
+  console.log('=== getFlashcards START ===');
+  console.log('userId:', userId);
+  console.log('page:', page, 'limit:', limit);
+  
+  const dbClient = supabaseServiceClient;
+  
+  const offset = (page - 1) * limit;
+  
+  // Pobierz całkowitą liczbę fiszek
+  const { count, error: countError } = await dbClient
+    .from('flashcards')
+    .select('*', { count: 'exact', head: true })
+    .eq('user_id', userId);
+    
+  if (countError) {
+    console.error('Błąd liczenia fiszek:', countError);
+    throw new Error(`Błąd podczas pobierania fiszek: ${countError.message}`);
+  }
+  
+  // Pobierz fiszki z paginacją
+  const { data, error } = await dbClient
+    .from('flashcards')
+    .select('id, front, back, source, generation_id, created_at, updated_at')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false })
+    .range(offset, offset + limit - 1);
+    
+  if (error) {
+    console.error('Błąd pobierania fiszek:', error);
+    throw new Error(`Błąd podczas pobierania fiszek: ${error.message}`);
+  }
+  
+  console.log('=== getFlashcards SUCCESS ===');
+  console.log('Pobrano:', data?.length || 0, 'fiszek z', count || 0, 'łącznie');
+  
+  return {
+    flashcards: (data || []).map(mapToDto),
+    total: count || 0
   };
 }
 
@@ -135,4 +186,85 @@ export async function createFlashcards(
     // Re-throw błędu do endpointu, który obsłuży odpowiednie kody statusu
     throw error;
   }
+}
+
+/**
+ * Aktualizuje pojedynczą fiszkę
+ * Sprawdza czy fiszka należy do użytkownika przed aktualizacją
+ */
+export async function updateFlashcard(
+  supabase: SupabaseClient,
+  userId: string,
+  flashcardId: number,
+  updateData: FlashcardUpdateDto
+): Promise<FlashcardDto> {
+  console.log('=== updateFlashcard START ===');
+  console.log('userId:', userId, 'flashcardId:', flashcardId);
+  
+  const dbClient = supabaseServiceClient;
+  
+  // Aktualizuj fiszkę tylko jeśli należy do użytkownika
+  const { data, error } = await dbClient
+    .from('flashcards')
+    .update({
+      ...updateData,
+      updated_at: new Date().toISOString()
+    })
+    .eq('id', flashcardId)
+    .eq('user_id', userId)
+    .select('id, front, back, source, generation_id, created_at, updated_at')
+    .single();
+    
+  if (error) {
+    console.error('Błąd aktualizacji fiszki:', error);
+    throw new Error(`Błąd podczas aktualizacji fiszki: ${error.message}`);
+  }
+  
+  if (!data) {
+    throw new Error('Fiszka nie została znaleziona lub nie masz do niej dostępu');
+  }
+  
+  console.log('=== updateFlashcard SUCCESS ===');
+  return mapToDto(data);
+}
+
+/**
+ * Usuwa pojedynczą fiszkę
+ * Sprawdza czy fiszka należy do użytkownika przed usunięciem
+ */
+export async function deleteFlashcard(
+  supabase: SupabaseClient,
+  userId: string,
+  flashcardId: number
+): Promise<void> {
+  console.log('=== deleteFlashcard START ===');
+  console.log('userId:', userId, 'flashcardId:', flashcardId);
+  
+  const dbClient = supabaseServiceClient;
+  
+  // Najpierw sprawdź czy fiszka istnieje i należy do użytkownika
+  const { data: existing, error: checkError } = await dbClient
+    .from('flashcards')
+    .select('id')
+    .eq('id', flashcardId)
+    .eq('user_id', userId)
+    .single();
+    
+  if (checkError || !existing) {
+    throw new Error('Fiszka nie została znaleziona lub nie masz do niej dostępu');
+  }
+  
+  // Usuń fiszkę
+  const { error } = await dbClient
+    .from('flashcards')
+    .delete()
+    .eq('id', flashcardId)
+    .eq('user_id', userId);
+    
+  if (error) {
+    console.error('Błąd usuwania fiszki:', error);
+    throw new Error(`Błąd podczas usuwania fiszki: ${error.message}`);
+  }
+  
+  console.log('=== deleteFlashcard SUCCESS ===');
 }

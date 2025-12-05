@@ -2,6 +2,7 @@ import { createHash } from 'node:crypto';
 import type { SupabaseClient } from '@/db/supabase.client';
 import { supabaseServiceClient } from '@/db/supabase.client';
 import type { FlashcardProposalDto, GenerationCreateResponseDto } from '../types';
+import { generateFlashcardsWithOpenAI } from './openai.service';
 
 /**
  * Generuje hash tekstu źródłowego do identyfikacji duplikatów używając algorytmu MD5
@@ -12,8 +13,9 @@ export function createSourceTextHash(sourceText: string): string {
 
 /**
  * Konfiguracja modelu AI używanego do generowania fiszek
+ * gpt-4o-mini jest szybszy i tańszy, gpt-4o dla lepszej jakości
  */
-const AI_MODEL = 'gpt-4';
+const AI_MODEL = 'gpt-4o-mini';
 
 /**
  * Interfejs dla danych potrzebnych do zapisania generacji
@@ -102,34 +104,10 @@ async function logGenerationError(
 }
 
 /**
- * Funkcja do generowania propozycji fiszek za pomocą AI
- * Na etapie developmentu zwraca przykładowe dane zamiast wywoływania rzeczywistego serwisu AI
+ * Funkcja do generowania propozycji fiszek za pomocą AI (OpenAI)
  */
 async function generateFlashcardProposals(sourceText: string): Promise<FlashcardProposalDto[]> {
-  // TODO: Integracja z rzeczywistym serwisem AI
-  // Na etapie developmentu zwracamy przykładowe dane
-  
-  // Symulacja opóźnienia, jak przy wywołaniu rzeczywistego API
-  await new Promise(resolve => setTimeout(resolve, 2000));
-  
-  // Przykładowe propozycje fiszek
-  return [
-    {
-      front: 'Co to jest Astro?',
-      back: 'Astro to framework do budowania szybkich stron internetowych, który umożliwia wykorzystanie komponentów z różnych frameworków JavaScript.',
-      source: 'ai-full',
-    },
-    {
-      front: 'Czym jest Supabase?',
-      back: 'Supabase to platforma backend-as-a-service oferująca bazę danych PostgreSQL, autentykację, przechowywanie plików i API w czasie rzeczywistym.',
-      source: 'ai-full',
-    },
-    {
-      front: 'Co to jest TypeScript?',
-      back: 'TypeScript to typowany nadzbiór JavaScript, który dodaje statyczne sprawdzanie typów i kompiluje do czystego JavaScript.',
-      source: 'ai-full',
-    },
-  ];
+  return generateFlashcardsWithOpenAI(sourceText, AI_MODEL);
 }
 
 /**
