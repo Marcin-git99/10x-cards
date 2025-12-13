@@ -2,7 +2,7 @@ import { createHash } from 'node:crypto';
 import type { SupabaseClient } from '@/db/supabase.client';
 import { supabaseServiceClient } from '@/db/supabase.client';
 import type { FlashcardProposalDto, GenerationCreateResponseDto } from '../types';
-import { generateFlashcardsWithOpenAI } from './openai.service';
+import { generateFlashcardsWithOpenRouter } from './openrouter.service';
 
 /**
  * Generuje hash tekstu źródłowego do identyfikacji duplikatów używając algorytmu MD5
@@ -13,9 +13,9 @@ export function createSourceTextHash(sourceText: string): string {
 
 /**
  * Konfiguracja modelu AI używanego do generowania fiszek
- * gpt-4o-mini jest szybszy i tańszy, gpt-4o dla lepszej jakości
+ * openai/gpt-4o-mini obsługuje response_format z JSON schema
  */
-const AI_MODEL = 'gpt-4o-mini';
+const AI_MODEL = 'openai/gpt-4o-mini';
 
 /**
  * Interfejs dla danych potrzebnych do zapisania generacji
@@ -104,10 +104,10 @@ async function logGenerationError(
 }
 
 /**
- * Funkcja do generowania propozycji fiszek za pomocą AI (OpenAI)
+ * Funkcja do generowania propozycji fiszek za pomocą AI (OpenRouter)
  */
 async function generateFlashcardProposals(sourceText: string): Promise<FlashcardProposalDto[]> {
-  return generateFlashcardsWithOpenAI(sourceText, AI_MODEL);
+  return generateFlashcardsWithOpenRouter(sourceText, AI_MODEL);
 }
 
 /**
