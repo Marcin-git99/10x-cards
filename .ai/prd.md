@@ -51,24 +51,32 @@ Manualne tworzenie wysokiej jakości fiszek wymaga dużych nakładów czasu i wy
 
 ID: US-001
 Tytuł: Rejestracja konta
-Opis: Jako nowy użytkownik chcę się zarejestrować, aby mieć dostęp do własnych fiszek i móc korzystać z generowania fiszek przez AI.
+Opis: Jako nowy użytkownik chcę się zarejestrować, aby mieć dostęp do zapisywania fiszek i zarządzania nimi w "Moje fiszki".
 Kryteria akceptacji:
-- Formularz rejestracyjny zawiera pola na adres e-mail i hasło.
+- Rejestracja odbywa się na dedykowanej stronie.
+- Formularz rejestracyjny zawiera pola na adres e-mail, hasło i potwierdzenie hasła.
 - Po poprawnym wypełnieniu formularza i weryfikacji danych konto jest aktywowane.
 - Użytkownik otrzymuje potwierdzenie pomyślnej rejestracji i zostaje zalogowany.
+- Nie korzystamy z zewnętrznych serwisów logowania (np. Google, GitHub).
 
 ID: US-002
 Tytuł: Logowanie do aplikacji
-Opis: Jako zarejestrowany użytkownik chcę móc się zalogować, aby mieć dostęp do moich fiszek i historii generowania.
+Opis: Jako zarejestrowany użytkownik chcę móc się zalogować, aby mieć dostęp do moich zapisanych fiszek w "Moje fiszki".
 Kryteria akceptacji:
+- Logowanie odbywa się na dedykowanej stronie.
+- Logowanie wymaga podania adresu e-mail i hasła.
 - Po podaniu prawidłowych danych logowania użytkownik zostaje przekierowany do widoku generowania fiszek.
 - Błędne dane logowania wyświetlają komunikat o nieprawidłowych danych.
 - Dane dotyczące logowania przechowywane są w bezpieczny sposób.
+- Użytkownik może logować się do systemu poprzez przycisk w prawym górnym rogu.
+- Użytkownik może się wylogować z systemu poprzez przycisk w prawym górnym rogu w głównym ukladzie strony (Layout).
+- Odzyskiwanie hasła jest możliwe poprzez funkcję "Zapomniałem hasła".
 
 ID: US-003
 Tytuł: Generowanie fiszek przy użyciu AI
-Opis: Jako zalogowany użytkownik chcę wkleić kawałek tekstu i za pomocą przycisku wygenerować propozycje fiszek, aby zaoszczędzić czas na ręcznym tworzeniu pytań i odpowiedzi.
+Opis: Jako użytkownik (zalogowany lub niezalogowany) chcę wkleić kawałek tekstu i za pomocą przycisku wygenerować propozycje fiszek, aby zaoszczędzić czas na ręcznym tworzeniu pytań i odpowiedzi.
 Kryteria akceptacji:
+- Funkcja generowania fiszek jest dostępna bez logowania się do systemu.
 - W widoku generowania fiszek znajduje się pole tekstowe, w którym użytkownik może wkleić swój tekst.
 - Pole tekstowe oczekuje od 1000 do 10 000 znaków.
 - Po kliknięciu przycisku generowania aplikacja komunikuje się z API modelu LLM i wyświetla listę wygenerowanych propozycji fiszek do akceptacji przez użytkownika.
@@ -76,11 +84,14 @@ Kryteria akceptacji:
 
 ID: US-004
 Tytuł: Przegląd i zatwierdzanie propozycji fiszek
-Opis: Jako zalogowany użytkownik chcę móc przeglądać wygenerowane fiszki i decydować, które z nich chcę dodać do mojego zestawu, aby zachować tylko przydatne pytania i odpowiedzi.
+Opis: Jako użytkownik (zalogowany lub niezalogowany) chcę móc przeglądać wygenerowane fiszki i decydować, które z nich chcę dodać do mojego zestawu, aby zachować tylko przydatne pytania i odpowiedzi.
 Kryteria akceptacji:
 - Lista wygenerowanych fiszek jest wyświetlana pod formularzem generowania.
 - Przy każdej fiszce znajduje się przycisk pozwalający na jej zatwierdzenie, edycję lub odrzucenie.
-- Po zatwierdzeniu wybranych fiszek użytkownik może kliknąć przycisk zapisu i dodać je do bazy danych.
+- Użytkownik MOŻE przeglądać i edytować propozycje fiszek bez logowania się do systemu.
+- Użytkownik NIE MOŻE zapisać fiszek do bazy danych bez logowania się do systemu.
+- Po zatwierdzeniu wybranych fiszek zalogowany użytkownik może kliknąć przycisk zapisu i dodać je do bazy danych ("Moje fiszki").
+- Niezalogowany użytkownik przy próbie zapisu zostaje przekierowany do strony logowania/rejestracji.
 
 ID: US-005
 Tytuł: Edycja fiszek utworzonych ręcznie i generowanych przez AI
@@ -119,8 +130,11 @@ ID: US-009
 Tytuł: Bezpieczny dostęp i autoryzacja
 Opis: Jako zalogowany użytkownik chcę mieć pewność, że moje fiszki nie są dostępne dla innych użytkowników, aby zachować prywatność i bezpieczeństwo danych.
 Kryteria akceptacji:
-- Tylko zalogowany użytkownik może wyświetlać, edytować i usuwać swoje fiszki.
+- Tylko zalogowany użytkownik może wyświetlać, edytować i usuwać swoje fiszki w "Moje fiszki".
 - Nie ma dostępu do fiszek innych użytkowników ani możliwości współdzielenia.
+- Użytkownik MOŻE korzystać z generowania fiszek (US-003) bez logowania się do systemu.
+- Użytkownik NIE MOŻE korzystać z funkcji "Moje fiszki" bez logowania się do systemu (US-005, US-006, US-007, US-008).
+- Funkcjonalność "Moje fiszki" obejmuje: zapisywanie, edycję, usuwanie fiszek oraz sesję nauki.
 
 ## 6. Metryki sukcesu
 1. Efektywność generowania fiszek:

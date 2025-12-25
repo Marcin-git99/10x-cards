@@ -1,0 +1,21 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import AuthLayout from '../../components/auth/AuthLayout';
+import SignupForm from '../../components/auth/SignupForm';
+
+// If user is already logged in, redirect to home page
+const user = Astro.locals.user;
+if (user) {
+  return Astro.redirect('/');
+}
+---
+
+<Layout title="Rejestracja - 10x Cards" showTopbar={false}>
+  <div class="flex flex-col min-h-screen bg-gray-50">
+    <main class="flex-grow">
+      <AuthLayout client:load title="Rejestracja" subtitle="Utwórz nowe konto, aby zapisywać swoje fiszki">
+        <SignupForm client:load />
+      </AuthLayout>
+    </main>
+  </div>
+</Layout>

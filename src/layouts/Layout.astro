@@ -1,13 +1,19 @@
 ---
+import Topbar from '../components/Topbar';
+
 export interface Props {
 	title: string;
+	showTopbar?: boolean;
 }
 
-const { title } = Astro.props;
+const { title, showTopbar = true } = Astro.props;
+
+// Get user from middleware (will be null if not authenticated)
+const user = Astro.locals.user;
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="pl">
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="description" content="10xCards - AI-powered flashcard generator" />
@@ -16,7 +22,8 @@ const { title } = Astro.props;
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
 	</head>
-	<body>
+	<body class="min-h-screen bg-gray-50">
+		{showTopbar && <Topbar client:load user={user} />}
 		<slot />
 		<style>
 			@import "../styles/globals.css";

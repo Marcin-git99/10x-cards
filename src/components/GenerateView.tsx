@@ -10,8 +10,14 @@ import { useGenerateFlashcards } from './hooks/useGenerateFlashcards';
 import { useTextValidation, canGenerateFromText } from './hooks/useTextValidation';
 import { useSaveProgress } from './hooks/useSaveProgress';
 
+export interface User {
+  id: string;
+  email: string;
+}
+
 export interface GenerateViewProps {
   className?: string;
+  user?: User | null;
 }
 
 /**
@@ -20,7 +26,9 @@ export interface GenerateViewProps {
  */
 export const GenerateView: React.FC<GenerateViewProps> = ({
   className = '',
+  user = null,
 }) => {
+  const isAuthenticated = !!user;
   const { state, bulkSelectionState, actions } = useGenerateFlashcards();
   const textValidation = useTextValidation(state.sourceText);
   const { progress, startSave, updateProgress, completeSave, failSave, resetProgress } = useSaveProgress();
@@ -57,6 +65,13 @@ export const GenerateView: React.FC<GenerateViewProps> = ({
 
   // Handle saving flashcards
   const handleSave = useCallback(async (mode: 'selected' | 'all' | 'custom') => {
+    // Check if user is authenticated (US-004)
+    if (!isAuthenticated) {
+      // Redirect to login page with return URL
+      window.location.href = '/auth/login';
+      return;
+    }
+
     try {
       // Determine total count for progress
       const totalToSave = mode === 'selected' 
@@ -89,7 +104,7 @@ export const GenerateView: React.FC<GenerateViewProps> = ({
       failSave(error instanceof Error ? error.message : 'Błąd zapisu');
       // Error is also handled by the hook
     }
-  }, [actions, bulkSelectionState.selectedCount, state.proposals.length, startSave, completeSave, failSave, resetProgress]);
+  }, [actions, bulkSelectionState.selectedCount, state.proposals.length, startSave, completeSave, failSave, resetProgress, isAuthenticated]);
 
   // Determine button disabled state and reason
   const generateDisabled = !textValidation.isValid || state.isGenerating;
@@ -194,6 +209,11 @@ export const GenerateView: React.FC<GenerateViewProps> = ({
                     </span>
                   </div>
                   <div className="flex items-center space-x-3">
+                    {!isAuthenticated && (
+                      <span className="text-sm text-amber-600">
+                        <a href="/auth/login" className="underline hover:text-amber-700">Zaloguj się</a>, aby zapisać fiszki
+                      </span>
+                    )}
                     <BulkSaveButton
                       selectedCount={bulkSelectionState.selectedCount}
                       totalCount={state.proposals.length}
