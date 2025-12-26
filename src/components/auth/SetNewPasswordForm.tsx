@@ -1,13 +1,17 @@
-import { useState, useCallback } from 'react';
-import { Mail, Lock, User } from 'lucide-react';
+import { useState, useCallback, useEffect } from 'react';
+import { Lock } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
-export default function SignupForm() {
-  const [email, setEmail] = useState('');
+interface SetNewPasswordFormProps {
+  accessToken: string;
+  refreshToken?: string;
+}
+
+export default function SetNewPasswordForm({ accessToken, refreshToken }: SetNewPasswordFormProps) {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -17,12 +21,6 @@ export default function SignupForm() {
 
   const validateForm = useCallback(() => {
     const errors: Record<string, string> = {};
-
-    if (!email.trim()) {
-      errors.email = 'Adres email jest wymagany';
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      errors.email = 'Nieprawidłowy adres email';
-    }
 
     if (!password) {
       errors.password = 'Hasło jest wymagane';
@@ -38,7 +36,7 @@ export default function SignupForm() {
 
     setFieldErrors(errors);
     return Object.keys(errors).length === 0;
-  }, [email, password, confirmPassword]);
+  }, [password, confirmPassword]);
 
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {
@@ -53,59 +51,44 @@ export default function SignupForm() {
       setIsLoading(true);
 
       try {
-        const response = await fetch('/api/auth/signup', {
+        const response = await fetch('/api/auth/update-password', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ email, password, confirmPassword }),
+          body: JSON.stringify({ 
+            password,
+            accessToken,
+            refreshToken 
+          }),
         });
 
         const data = await response.json();
 
         if (response.ok) {
-          if (data.needsEmailConfirmation) {
-            setSuccess('Account created! Please check your email for a verification link.');
-          } else {
-            // Auto-confirmed - redirect to generate page (US-001)
-            window.location.href = '/generate';
-          }
+          setSuccess('Hasło zostało zmienione pomyślnie! Za chwilę zostaniesz przekierowany do logowania...');
+          setPassword('');
+          setConfirmPassword('');
+          
+          // Redirect to login after 2 seconds
+          setTimeout(() => {
+            window.location.href = '/auth/login';
+          }, 2000);
         } else {
-          throw new Error(data.message || 'Rejestracja nie powiodła się');
+          throw new Error(data.message || 'Wystąpił błąd podczas zmiany hasła');
         }
       } catch (err) {
         if (err instanceof Error) {
           setError(err.message);
         } else {
-          setError('Wystąpił błąd');
+          setError('Wystąpił nieoczekiwany błąd');
         }
       } finally {
         setIsLoading(false);
       }
     },
-    [email, password, confirmPassword, validateForm]
+    [password, confirmPassword, accessToken, refreshToken, validateForm]
   );
-
-  // If registration successful and needs email confirmation, show success view
-  if (success) {
-    return (
-      <div className="space-y-6 text-center pt-2">
-        <Alert className="bg-green-50 border-green-200 py-6">
-          <AlertDescription className="text-green-700 font-medium">
-            {success}
-          </AlertDescription>
-        </Alert>
-        <div className="pt-2">
-          <a
-            href="/auth/login"
-            className="font-semibold text-blue-600 hover:text-blue-500 transition-colors"
-          >
-            Return to login
-          </a>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
@@ -115,30 +98,16 @@ export default function SignupForm() {
         </Alert>
       )}
 
-      <div className="space-y-2">
-        <Label htmlFor="email" className="text-sm font-semibold text-gray-700">Email address</Label>
-        <div className="relative">
-          <Mail className="absolute left-3 top-3.5 h-4 w-4 text-gray-400" />
-          <Input
-            id="email"
-            name="email"
-            type="email"
-            autoComplete="email"
-            placeholder="Enter your email"
-            className="pl-10 h-11 border-gray-200 focus:border-black focus:ring-0 focus-visible:ring-0 transition-all"
-            value={email}
-            onChange={(e) => {
-              setEmail(e.target.value);
-              if (fieldErrors.email) setFieldErrors((prev) => ({ ...prev, email: '' }));
-            }}
-            disabled={isLoading}
-          />
-        </div>
-        {fieldErrors.email && <p className="text-xs text-red-500 mt-1">{fieldErrors.email}</p>}
-      </div>
+      {success && (
+        <Alert className="bg-green-50 border-green-200 py-3">
+          <AlertDescription className="text-green-700">{success}</AlertDescription>
+        </Alert>
+      )}
 
       <div className="space-y-2">
-        <Label htmlFor="password" className="text-sm font-semibold text-gray-700">Password</Label>
+        <Label htmlFor="password" className="text-sm font-semibold text-gray-700">
+          Nowe hasło
+        </Label>
         <div className="relative">
           <Lock className="absolute left-3 top-3.5 h-4 w-4 text-gray-400" />
           <Input
@@ -146,21 +115,25 @@ export default function SignupForm() {
             name="password"
             type="password"
             autoComplete="new-password"
-            placeholder="Minimum 8 characters"
+            placeholder="Minimum 8 znaków"
             className="pl-10 h-11 border-gray-200 focus:border-black focus:ring-0 focus-visible:ring-0 transition-all"
             value={password}
             onChange={(e) => {
               setPassword(e.target.value);
               if (fieldErrors.password) setFieldErrors((prev) => ({ ...prev, password: '' }));
             }}
-            disabled={isLoading}
+            disabled={isLoading || !!success}
           />
         </div>
-        {fieldErrors.password && <p className="text-xs text-red-500 mt-1">{fieldErrors.password}</p>}
+        {fieldErrors.password && (
+          <p className="text-xs text-red-500 mt-1">{fieldErrors.password}</p>
+        )}
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="confirmPassword" className="text-sm font-semibold text-gray-700">Confirm Password</Label>
+        <Label htmlFor="confirmPassword" className="text-sm font-semibold text-gray-700">
+          Potwierdź nowe hasło
+        </Label>
         <div className="relative">
           <Lock className="absolute left-3 top-3.5 h-4 w-4 text-gray-400" />
           <Input
@@ -168,33 +141,35 @@ export default function SignupForm() {
             name="confirmPassword"
             type="password"
             autoComplete="new-password"
-            placeholder="Repeat your password"
+            placeholder="Powtórz hasło"
             className="pl-10 h-11 border-gray-200 focus:border-black focus:ring-0 focus-visible:ring-0 transition-all"
             value={confirmPassword}
             onChange={(e) => {
               setConfirmPassword(e.target.value);
               if (fieldErrors.confirmPassword) setFieldErrors((prev) => ({ ...prev, confirmPassword: '' }));
             }}
-            disabled={isLoading}
+            disabled={isLoading || !!success}
           />
         </div>
-        {fieldErrors.confirmPassword && <p className="text-xs text-red-500 mt-1">{fieldErrors.confirmPassword}</p>}
+        {fieldErrors.confirmPassword && (
+          <p className="text-xs text-red-500 mt-1">{fieldErrors.confirmPassword}</p>
+        )}
       </div>
 
-      <Button 
-        type="submit" 
-        className="w-full h-11 bg-gray-900 hover:bg-black text-white font-semibold rounded-md transition-all" 
-        disabled={isLoading}
+      <Button
+        type="submit"
+        className="w-full h-11 bg-gray-900 hover:bg-black text-white font-semibold rounded-md transition-all"
+        disabled={isLoading || !!success}
       >
-        {isLoading ? 'Creating account...' : 'Create account'}
+        {isLoading ? 'Zapisywanie...' : 'Ustaw nowe hasło'}
       </Button>
 
       <div className="text-center text-sm text-gray-500 pt-2">
-        Already have an account?{' '}
         <a href="/auth/login" className="font-semibold text-gray-900 hover:underline">
-          Sign in
+          Powrót do logowania
         </a>
       </div>
     </form>
   );
 }
+

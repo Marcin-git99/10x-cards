@@ -2,7 +2,6 @@ import type { APIRoute } from 'astro';
 import { z } from 'zod';
 import { createFlashcards, getFlashcards } from '../../lib/flashcard.service';
 import type { FlashcardsCreateCommand, FlashcardDto } from '../../types';
-import { DEFAULT_USER_ID } from '@/db/supabase.client';
 
 /**
  * Endpoint GET /api/flashcards
@@ -14,7 +13,18 @@ export const GET: APIRoute = async ({ request, locals }) => {
   try {
     console.log('GET /api/flashcards - Otrzymano żądanie');
     
-    const userId = DEFAULT_USER_ID;
+    // Pobierz ID zalogowanego użytkownika
+    const userId = locals.user?.id;
+    
+    if (!userId) {
+      return new Response(
+        JSON.stringify({ 
+          error: 'Unauthorized', 
+          message: 'Musisz być zalogowany, aby pobierać fiszki' 
+        }),
+        { status: 401, headers: { 'Content-Type': 'application/json' } }
+      );
+    }
     const url = new URL(request.url);
     const page = parseInt(url.searchParams.get('page') || '1', 10);
     const limit = parseInt(url.searchParams.get('limit') || '20', 10);
@@ -102,8 +112,21 @@ export const POST: APIRoute = async ({ request, locals }) => {
   try {
     console.log('POST /api/flashcards - Otrzymano żądanie');
     
-    // Używamy stałego ID użytkownika na czas developmentu
-    const userId = DEFAULT_USER_ID;
+    // Pobierz ID zalogowanego użytkownika
+    const userId = locals.user?.id;
+    
+    if (!userId) {
+      return new Response(
+        JSON.stringify({ 
+          error: 'Unauthorized', 
+          message: 'Musisz być zalogowany, aby tworzyć fiszki' 
+        }),
+        { 
+          status: 401,
+          headers: { 'Content-Type': 'application/json' }
+        }
+      );
+    }
 
     // Parsowanie ciała żądania JSON
     let requestBody;

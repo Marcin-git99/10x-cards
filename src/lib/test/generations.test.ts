@@ -1,6 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { generateFlashcards, createSourceTextHash } from '../generation.service';
-import { DEFAULT_USER_ID } from '@/db/supabase.client';
+
+// Testowy UUID dla mocków
+const TEST_USER_ID = '00000000-0000-0000-0000-000000000001';
 
 // Mock dla supabase client
 const mockSupabaseClient = {
@@ -33,7 +35,7 @@ describe('generation.service', () => {
 
       const result = await generateFlashcards(
         mockSupabaseClient as any,
-        DEFAULT_USER_ID,
+        TEST_USER_ID,
         sourceText
       );
 

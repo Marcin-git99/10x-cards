@@ -2,7 +2,6 @@ import type { APIRoute } from 'astro';
 import { z } from 'zod';
 import { generateFlashcards } from '../../lib/generation.service';
 import type { GenerateFlashcardsCommand, GenerationCreateResponseDto } from '../../types';
-import { DEFAULT_USER_ID } from '@/db/supabase.client';
 
 // Schema walidacji dla zapytania
 const GenerateFlashcardsSchema = z.object({
@@ -23,8 +22,21 @@ export const POST: APIRoute = async ({ request, locals }) => {
   try {
     console.log('POST /api/generations - Otrzymano żądanie');
     
-    // Używamy stałego ID użytkownika na czas developmentu
-    const userId = DEFAULT_USER_ID;
+    // Pobierz ID zalogowanego użytkownika
+    const userId = locals.user?.id;
+    
+    if (!userId) {
+      return new Response(
+        JSON.stringify({ 
+          error: 'Unauthorized', 
+          message: 'Musisz być zalogowany, aby generować fiszki' 
+        }),
+        { 
+          status: 401,
+          headers: { 'Content-Type': 'application/json' }
+        }
+      );
+    }
 
     // Parsowanie ciała żądania JSON
     let requestBody;

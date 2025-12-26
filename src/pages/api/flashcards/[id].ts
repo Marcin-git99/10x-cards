@@ -1,7 +1,6 @@
 import type { APIRoute } from 'astro';
 import { z } from 'zod';
 import { updateFlashcard, deleteFlashcard } from '../../../lib/flashcard.service';
-import { DEFAULT_USER_ID } from '@/db/supabase.client';
 
 // Schema walidacji dla aktualizacji fiszki (zgodnie z PRD: max 200/500 znaków)
 const FlashcardUpdateSchema = z.object({
@@ -31,7 +30,15 @@ export const PUT: APIRoute = async ({ params, request, locals }) => {
       );
     }
     
-    const userId = DEFAULT_USER_ID;
+    // Pobierz ID zalogowanego użytkownika
+    const userId = locals.user?.id;
+    
+    if (!userId) {
+      return new Response(
+        JSON.stringify({ error: 'Unauthorized', message: 'Musisz być zalogowany, aby edytować fiszki' }),
+        { status: 401, headers: { 'Content-Type': 'application/json' } }
+      );
+    }
     
     let requestBody;
     try {
@@ -99,7 +106,15 @@ export const DELETE: APIRoute = async ({ params, locals }) => {
       );
     }
     
-    const userId = DEFAULT_USER_ID;
+    // Pobierz ID zalogowanego użytkownika
+    const userId = locals.user?.id;
+    
+    if (!userId) {
+      return new Response(
+        JSON.stringify({ error: 'Unauthorized', message: 'Musisz być zalogowany, aby usuwać fiszki' }),
+        { status: 401, headers: { 'Content-Type': 'application/json' } }
+      );
+    }
     
     await deleteFlashcard(locals.supabase, userId, flashcardId);
     

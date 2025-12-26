@@ -8,9 +8,6 @@ import type { Database } from './database.types';
 export type SupabaseClient = ReturnType<typeof createClient<Database>>;
 export type SupabaseServerClient = ReturnType<typeof createServerClient<Database>>;
 
-// Stałe ID użytkownika używane podczas developmentu (do usunięcia po pełnej integracji auth)
-export const DEFAULT_USER_ID = '00000000-0000-0000-0000-000000000000';
-
 // Environment variables
 const supabaseUrl = import.meta.env.SUPABASE_URL || 'http://127.0.0.1:54321';
 const supabaseAnonKey =

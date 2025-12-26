@@ -10,10 +10,14 @@ if (user) {
 }
 ---
 
-<Layout title="Rejestracja - 10x Cards" showTopbar={false}>
-  <div class="flex flex-col min-h-screen bg-gray-50">
+<Layout title="Create account - 10x Cards" showTopbar={false}>
+  <div class="flex flex-col min-h-screen">
     <main class="flex-grow">
-      <AuthLayout client:load title="Rejestracja" subtitle="Utwórz nowe konto, aby zapisywać swoje fiszki">
+      <AuthLayout 
+        client:load 
+        title="Create an account" 
+        subtitle="Sign up to start building your flashcards"
+      >
         <SignupForm client:load />
       </AuthLayout>
     </main>
