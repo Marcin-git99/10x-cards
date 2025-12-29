@@ -111,23 +111,42 @@ async function generateFlashcardProposals(sourceText: string): Promise<Flashcard
 }
 
 /**
+ * Odpowiedź dla anonimowego generowania (bez zapisu do bazy)
+ */
+interface AnonymousGenerationResponse {
+  generation_id: null;
+  flashcards_proposals: FlashcardProposalDto[];
+  generated_count: number;
+}
+
+/**
  * Główna funkcja serwisu do generowania fiszek
+ * 
+ * Zgodnie z US-003: Funkcja generowania fiszek jest dostępna bez logowania.
+ * - Dla zalogowanych użytkowników (userId !== null): metadane zapisywane w bazie
+ * - Dla niezalogowanych użytkowników (userId === null): tylko generowanie, bez zapisu
+ * 
+ * @param supabase - Klient Supabase
+ * @param userId - ID użytkownika lub null dla niezalogowanych
+ * @param sourceText - Tekst źródłowy do generowania fiszek
  */
 export async function generateFlashcards(
   supabase: SupabaseClient,
-  userId: string,
+  userId: string | null,
   sourceText: string
-): Promise<GenerationCreateResponseDto> {
+): Promise<GenerationCreateResponseDto | AnonymousGenerationResponse> {
   console.log('=== generateFlashcards START ===');
-  console.log('userId:', userId);
+  console.log('userId:', userId ?? 'anonymous');
   console.log('sourceText length:', sourceText.length);
   
+  const isAuthenticated = userId !== null;
   const startTime = Date.now();
   const sourceTextHash = createSourceTextHash(sourceText);
   const sourceTextLength = sourceText.length;
   
   console.log('sourceTextHash:', sourceTextHash);
   console.log('sourceTextLength:', sourceTextLength);
+  console.log('isAuthenticated:', isAuthenticated);
   
   // Używamy service client dla operacji na bazie danych podczas developmentu
   const dbClient = supabaseServiceClient;
@@ -141,8 +160,20 @@ export async function generateFlashcards(
     
     const endTime = Date.now();
     
+    // Dla niezalogowanych użytkowników - zwróć propozycje bez zapisu do bazy
+    if (!isAuthenticated) {
+      console.log('Tryb anonimowy - pomijam zapis metadanych do bazy');
+      const result: AnonymousGenerationResponse = {
+        generation_id: null,
+        flashcards_proposals: flashcardProposals,
+        generated_count: flashcardProposals.length,
+      };
+      console.log('=== generateFlashcards SUCCESS (anonymous) ===');
+      return result;
+    }
+    
+    // Dla zalogowanych użytkowników - zapisz metadane generacji
     console.log('Zapisuję metadane generacji...');
-    // Zapisanie metadanych generacji
     const generationId = await saveGenerationMetadata(dbClient, {
       user_id: userId,
       model: AI_MODEL,
@@ -155,7 +186,7 @@ export async function generateFlashcards(
     console.log('Zapisano generację z ID:', generationId);
     
     // Przygotowanie odpowiedzi
-    const result = {
+    const result: GenerationCreateResponseDto = {
       generation_id: generationId,
       flashcards_proposals: flashcardProposals,
       generated_count: flashcardProposals.length,
@@ -167,22 +198,26 @@ export async function generateFlashcards(
     console.error('=== generateFlashcards ERROR ===');
     console.error('Błąd:', error);
     
-    // Logowanie błędu
-    const errorMessage = error instanceof Error ? error.message : 'Nieznany błąd';
-    console.log('Zapisuję błąd do bazy...');
-    
-    try {
-      await logGenerationError(dbClient, {
-        user_id: userId,
-        error_code: 'GENERATION_FAILED',
-        error_message: errorMessage,
-        model: AI_MODEL,
-        source_text_hash: sourceTextHash,
-        source_text_length: sourceTextLength,
-      });
-      console.log('Błąd zapisany do bazy');
-    } catch (logError) {
-      console.error('Błąd podczas zapisywania błędu:', logError);
+    // Logowanie błędu - tylko dla zalogowanych użytkowników
+    if (isAuthenticated) {
+      const errorMessage = error instanceof Error ? error.message : 'Nieznany błąd';
+      console.log('Zapisuję błąd do bazy...');
+      
+      try {
+        await logGenerationError(dbClient, {
+          user_id: userId,
+          error_code: 'GENERATION_FAILED',
+          error_message: errorMessage,
+          model: AI_MODEL,
+          source_text_hash: sourceTextHash,
+          source_text_length: sourceTextLength,
+        });
+        console.log('Błąd zapisany do bazy');
+      } catch (logError) {
+        console.error('Błąd podczas zapisywania błędu:', logError);
+      }
+    } else {
+      console.log('Tryb anonimowy - pomijam zapis błędu do bazy');
     }
     
     throw error;

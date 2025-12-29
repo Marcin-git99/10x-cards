@@ -16,17 +16,17 @@ const PUBLIC_PATHS = [
   // Public pages
   '/',
   '/login', // Legacy login page (redirect)
+  '/generate', // US-003: Generowanie fiszek dostępne bez logowania
   // Public API endpoints
   '/api/ping',
   '/api/test',
+  '/api/generations', // US-003: Generowanie fiszek dostępne bez logowania
 ];
 
 // Paths that require authentication
 const PROTECTED_PATHS = [
-  '/generate',
   '/flashcards',
   '/study',
-  '/api/generations',
   '/api/flashcards',
   '/api/collections',
 ];

@@ -14,6 +14,10 @@ const GenerateFlashcardsSchema = z.object({
  * Endpoint POST /generations
  * 
  * Inicjuje proces generowania propozycji fiszek przez AI na podstawie tekstu dostarczonego przez użytkownika.
+ * Zgodnie z US-003: Funkcja generowania fiszek jest dostępna bez logowania się do systemu.
+ * 
+ * Dla zalogowanych użytkowników: metadane generacji są zapisywane w bazie danych.
+ * Dla niezalogowanych użytkowników: fiszki są generowane bez zapisu metadanych (generation_id = null).
  * 
  * @param context - Kontekst zapytania Astro
  * @returns Odpowiedź z wygenerowanymi propozycjami fiszek
@@ -22,21 +26,11 @@ export const POST: APIRoute = async ({ request, locals }) => {
   try {
     console.log('POST /api/generations - Otrzymano żądanie');
     
-    // Pobierz ID zalogowanego użytkownika
-    const userId = locals.user?.id;
+    // Pobierz ID zalogowanego użytkownika (może być undefined dla niezalogowanych - US-003)
+    const userId = locals.user?.id ?? null;
+    const isAuthenticated = !!userId;
     
-    if (!userId) {
-      return new Response(
-        JSON.stringify({ 
-          error: 'Unauthorized', 
-          message: 'Musisz być zalogowany, aby generować fiszki' 
-        }),
-        { 
-          status: 401,
-          headers: { 'Content-Type': 'application/json' }
-        }
-      );
-    }
+    console.log(`Użytkownik: ${isAuthenticated ? userId : 'niezalogowany (anonymous)'}`);
 
     // Parsowanie ciała żądania JSON
     let requestBody;
@@ -78,9 +72,11 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
       console.log('Walidacja przeszła pomyślnie, wywołuję serwis...');
       console.log('Supabase client:', !!locals.supabase);
+      console.log('Tryb:', isAuthenticated ? 'zalogowany (z zapisem metadanych)' : 'anonimowy (bez zapisu)');
       
       try {
         // Wywołanie serwisu do generowania fiszek
+        // Dla niezalogowanych userId = null, serwis pominie zapis metadanych
         const result = await generateFlashcards(
           locals.supabase,
           userId,

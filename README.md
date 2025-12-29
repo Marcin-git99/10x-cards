@@ -36,6 +36,15 @@
 | CI/CD | **GitHub Actions** | Automated lint / build / deploy pipelines |
 | Hosting | **DigitalOcean** (Docker image) | Deploy Astro static output + Supabase if self-hosted |
 
+### Testing
+
+| Type | Technology | Purpose |
+|------|------------|---------|
+| Unit & Integration | **[Vitest](https://vitest.dev/)** | Fast unit testing framework optimized for Vite/Astro |
+| Component Testing | **[React Testing Library](https://testing-library.com/react)** | Testing React components with user-centric approach |
+| API Mocking | **[MSW (Mock Service Worker)](https://mswjs.io/)** | Mocking API requests in tests |
+| E2E Testing | **[Playwright](https://playwright.dev/)** | Cross-browser end-to-end testing |
+
 ### Key runtime & tooling versions
 
 - Node.js `22.14.0` (see `.nvmrc`)
@@ -78,6 +87,11 @@ The dev server automatically rebuilds when you edit files. Supabase can be point
 | `npm run lint` | Run ESLint over the codebase |
 | `npm run lint:fix` | Auto-fix lint issues |
 | `npm run format` | Format files with Prettier |
+| `npm run test` | Run unit tests with Vitest |
+| `npm run test:watch` | Run unit tests in watch mode |
+| `npm run test:coverage` | Run tests with coverage report |
+| `npm run test:e2e` | Run E2E tests with Playwright |
+| `npm run test:e2e:ui` | Run E2E tests with Playwright UI |
 
 ---
 
