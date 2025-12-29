@@ -23,3 +23,8 @@ astro.log
 
 # jetbrains setting folder
 .idea/
+
+# test output
+coverage/
+playwright-report/
+test-results/
