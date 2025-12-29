@@ -140,7 +140,7 @@ export default function LoginForm() {
       </Button>
 
       <div className="text-center text-sm text-gray-500 pt-2">
-        Don't have an account?{' '}
+        Don&apos;t have an account?{' '}
         <a href="/auth/signup" className="font-semibold text-gray-900 hover:underline">
           Sign up
         </a>

@@ -95,7 +95,7 @@ export const ProposalsList: React.FC<ProposalsListProps> = ({
             Brak propozycji fiszek
           </h3>
           <p className="text-muted-foreground">
-            Wprowadź tekst i kliknij "Generuj fiszki AI", aby zobaczyć propozycje.
+            Wprowadź tekst i kliknij &quot;Generuj fiszki AI&quot;, aby zobaczyć propozycje.
           </p>
         </div>
       </div>

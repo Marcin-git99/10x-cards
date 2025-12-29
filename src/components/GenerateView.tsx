@@ -248,7 +248,7 @@ export const GenerateView: React.FC<GenerateViewProps> = ({
           definicje, lub informacje które można przekształcić w pytania i odpowiedzi.
         </p>
         <p>
-          Generowane fiszki będą zapisane w Twojej kolekcji i dostępne w sekcji "Moje fiszki".
+          Generowane fiszki będą zapisane w Twojej kolekcji i dostępne w sekcji &quot;Moje fiszki&quot;.
         </p>
       </section>
 
