@@ -89,8 +89,19 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
 
+      - name: Debug - Check secrets are set
+        run: |
+          echo "SUPABASE_URL is set: ${{ secrets.SUPABASE_URL != '' }}"
+          echo "SUPABASE_PUBLIC_KEY is set: ${{ secrets.SUPABASE_PUBLIC_KEY != '' }}"
+          echo "E2E_USERNAME_ID is set: ${{ secrets.E2E_USERNAME_ID != '' }}"
+          echo "E2E_USERNAME is set: ${{ secrets.E2E_USERNAME != '' }}"
+          echo "E2E_PASSWORD is set: ${{ secrets.E2E_PASSWORD != '' }}"
+
       - name: Run E2E tests
-        run: npm run test:e2e
+        run: |
+          echo "E2E_USERNAME_ID=$E2E_USERNAME_ID" | head -c 20
+          echo "..."
+          npm run test:e2e
         env:
           CI: true
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
