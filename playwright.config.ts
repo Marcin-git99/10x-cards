@@ -3,12 +3,11 @@ import * as path from 'path';
 import dotenv from 'dotenv';
 
 /**
- * Load environment variables from .env.test for E2E tests (local development)
- * In CI, variables are injected via GitHub secrets - don't override them
+ * Load environment variables from .env.test for E2E tests
+ * In CI, .env.test is created from GitHub secrets
+ * Locally, .env.test contains local development values
  */
-if (!process.env.CI) {
-  dotenv.config({ path: path.resolve(process.cwd(), '.env.test') });
-}
+dotenv.config({ path: path.resolve(process.cwd(), '.env.test') });
 
 /**
  * Playwright configuration for E2E tests
