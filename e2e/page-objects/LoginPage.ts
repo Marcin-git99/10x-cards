@@ -36,10 +36,21 @@ export class LoginPage extends BasePage {
 
   /**
    * Fill login form
+   * Uses pressSequentially to ensure React controlled components receive proper input events
    */
   async fillForm(email: string, password: string) {
-    await this.emailInput.fill(email);
-    await this.passwordInput.fill(password);
+    // Wait for React hydration - ensure inputs are interactive
+    await this.emailInput.waitFor({ state: 'visible' });
+    
+    // Focus and clear email field, then type
+    await this.emailInput.click();
+    await this.emailInput.clear();
+    await this.emailInput.pressSequentially(email, { delay: 50 });
+    
+    // Focus and clear password field, then type
+    await this.passwordInput.click();
+    await this.passwordInput.clear();
+    await this.passwordInput.pressSequentially(password, { delay: 50 });
   }
 
   /**

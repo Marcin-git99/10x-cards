@@ -35,8 +35,12 @@ export const POST: APIRoute = async ({ request }) => {
     const { password, accessToken, refreshToken } = result.data;
 
     // Utworzenie klienta Supabase z tokenem użytkownika
+    // Supports both SUPABASE_KEY and SUPABASE_PUBLIC_KEY
     const supabaseUrl = import.meta.env.SUPABASE_URL || 'http://127.0.0.1:54321';
-    const supabaseAnonKey = import.meta.env.SUPABASE_KEY || 'sb_publishable_ACJWlzQHlZjBrEguHvfOxg_3BJgxAaH';
+    const supabaseAnonKey =
+      import.meta.env.SUPABASE_KEY ||
+      import.meta.env.SUPABASE_PUBLIC_KEY ||
+      'sb_publishable_ACJWlzQHlZjBrEguHvfOxg_3BJgxAaH';
 
     const supabase = createClient(supabaseUrl, supabaseAnonKey, {
       auth: {

@@ -38,7 +38,7 @@ export function FlashcardCard({ flashcard, onEdit, onDelete }: FlashcardCardProp
   };
 
   return (
-    <Card className="group hover:shadow-md transition-shadow">
+    <Card data-testid="flashcard-card" className="group hover:shadow-md transition-shadow">
       <CardContent className="p-5">
         {/* Header with source badge and actions */}
         <div className="flex items-start justify-between mb-4">

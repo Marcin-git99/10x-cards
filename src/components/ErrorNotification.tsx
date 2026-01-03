@@ -27,6 +27,7 @@ export const ErrorNotification: React.FC<ErrorNotificationProps> = ({
       className={className}
       role="alert"
       aria-live="assertive"
+      data-testid="error-notification"
     >
       <AlertCircle className="h-4 w-4" />
       <AlertTitle>{title}</AlertTitle>

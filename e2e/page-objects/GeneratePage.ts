@@ -22,14 +22,14 @@ export class GeneratePage extends BasePage {
     super(page);
     
     this.sourceTextArea = page.getByRole('textbox', { name: /tekst źródłowy/i });
-    this.charCounter = page.locator('[data-testid="char-counter"]');
+    this.charCounter = page.getByTestId('char-counter');
     this.generateButton = page.getByRole('button', { name: /generuj/i });
     this.proposalsList = page.locator('#generation-results');
-    this.proposalCards = page.locator('[data-testid="proposal-card"]');
+    this.proposalCards = page.getByTestId('proposal-card');
     this.saveButton = page.getByRole('button', { name: /zapisz/i });
-    this.selectedCount = page.locator('[data-testid="selected-count"]');
-    this.loadingIndicator = page.locator('[data-testid="loading-indicator"]');
-    this.errorNotification = page.locator('[data-testid="error-notification"]');
+    this.selectedCount = page.getByTestId('selected-count');
+    this.loadingIndicator = page.getByTestId('loading-indicator');
+    this.errorNotification = page.getByTestId('error-notification');
   }
 
   /**
