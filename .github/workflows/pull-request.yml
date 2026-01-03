@@ -89,17 +89,27 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
 
+      - name: Debug - Check secrets availability
+        run: |
+          echo "Checking if secrets are available (showing only if set, not values):"
+          if [ -n "${{ secrets.SUPABASE_URL }}" ]; then echo "✅ SUPABASE_URL is set"; else echo "❌ SUPABASE_URL is NOT set"; fi
+          if [ -n "${{ secrets.SUPABASE_PUBLIC_KEY }}" ]; then echo "✅ SUPABASE_PUBLIC_KEY is set"; else echo "❌ SUPABASE_PUBLIC_KEY is NOT set"; fi
+          if [ -n "${{ secrets.E2E_USERNAME_ID }}" ]; then echo "✅ E2E_USERNAME_ID is set"; else echo "❌ E2E_USERNAME_ID is NOT set"; fi
+          if [ -n "${{ secrets.E2E_USERNAME }}" ]; then echo "✅ E2E_USERNAME is set"; else echo "❌ E2E_USERNAME is NOT set"; fi
+          if [ -n "${{ secrets.E2E_PASSWORD }}" ]; then echo "✅ E2E_PASSWORD is set"; else echo "❌ E2E_PASSWORD is NOT set"; fi
+
       - name: Create .env.test for E2E
         run: |
-          cat > .env.test << EOF
-          SUPABASE_URL=${{ secrets.SUPABASE_URL }}
-          SUPABASE_KEY=${{ secrets.SUPABASE_PUBLIC_KEY }}
-          SUPABASE_PUBLIC_KEY=${{ secrets.SUPABASE_PUBLIC_KEY }}
-          E2E_USERNAME_ID=${{ secrets.E2E_USERNAME_ID }}
-          E2E_USERNAME=${{ secrets.E2E_USERNAME }}
-          E2E_PASSWORD=${{ secrets.E2E_PASSWORD }}
-          EOF
+          echo "SUPABASE_URL=${{ secrets.SUPABASE_URL }}" >> .env.test
+          echo "SUPABASE_KEY=${{ secrets.SUPABASE_PUBLIC_KEY }}" >> .env.test
+          echo "SUPABASE_PUBLIC_KEY=${{ secrets.SUPABASE_PUBLIC_KEY }}" >> .env.test
+          echo "E2E_USERNAME_ID=${{ secrets.E2E_USERNAME_ID }}" >> .env.test
+          echo "E2E_USERNAME=${{ secrets.E2E_USERNAME }}" >> .env.test
+          echo "E2E_PASSWORD=${{ secrets.E2E_PASSWORD }}" >> .env.test
           echo "Created .env.test with E2E credentials"
+          echo "File contents (masked):"
+          wc -l .env.test
+          cat .env.test | sed 's/=.*/=***/'
 
       - name: Run E2E tests
         run: npm run test:e2e
