@@ -203,7 +203,7 @@ export const GenerateView: React.FC<GenerateViewProps> = ({
               <div className="border-b border-gray-200 p-4 bg-gray-50">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-4">
-                    <span className="text-sm text-gray-600">
+                    <span data-testid="selected-count" className="text-sm text-gray-600">
                       <span className="font-medium text-gray-900">{bulkSelectionState.selectedCount}</span> z{' '}
                       <span className="font-medium text-gray-900">{state.proposals.length}</span> zaznaczonych
                     </span>

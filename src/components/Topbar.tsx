@@ -24,7 +24,7 @@ export default function Topbar({ user }: TopbarProps) {
   };
 
   return (
-    <header className="border-b border-gray-200 bg-white">
+    <header data-testid="topbar" className="border-b border-gray-200 bg-white">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           {/* Logo and title */}
@@ -54,7 +54,7 @@ export default function Topbar({ user }: TopbarProps) {
           <div className="flex items-center gap-4">
             {isLoggedIn ? (
               <>
-                <div className="hidden sm:flex items-center gap-2 text-sm text-gray-600">
+                <div data-testid="user-avatar" className="hidden sm:flex items-center gap-2 text-sm text-gray-600">
                   <UserIcon className="h-4 w-4" />
                   <span>{currentUser?.email}</span>
                 </div>
@@ -64,6 +64,7 @@ export default function Topbar({ user }: TopbarProps) {
                   onClick={handleLogout}
                   disabled={isLoading}
                   className="flex items-center gap-2"
+                  aria-label={isLoading ? 'Wylogowywanie...' : 'Wyloguj'}
                 >
                   <LogOut className="h-4 w-4" />
                   <span className="hidden sm:inline">

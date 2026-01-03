@@ -1,0 +1,13 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+## Tech Stack
+
+- React 19
+- Tailwind 4
+- Vite
+- shadcn/ui
+
+Always use libraries and frameworks available in [package.json](mdc:package.json)

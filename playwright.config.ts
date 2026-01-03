@@ -1,4 +1,12 @@
 import { defineConfig, devices } from '@playwright/test';
+import * as path from 'path';
+import dotenv from 'dotenv';
+
+/**
+ * Load environment variables from .env.test for E2E tests
+ * This provides access to E2E_USERNAME, E2E_PASSWORD, etc.
+ */
+dotenv.config({ path: path.resolve(process.cwd(), '.env.test') });
 
 /**
  * Playwright configuration for E2E tests
@@ -16,6 +24,9 @@ export default defineConfig({
   
   // Test file pattern
   testMatch: '**/*.spec.ts',
+  
+  // Global teardown - cleans test data after all tests complete
+  globalTeardown: './e2e/global-teardown.ts',
   
   // Run tests in parallel
   fullyParallel: true,
@@ -85,8 +96,9 @@ export default defineConfig({
   outputDir: 'test-results/e2e-artifacts',
   
   // Web server configuration
+  // Uses dev:e2e which loads .env.test for E2E testing database
   webServer: {
-    command: 'npm run dev',
+    command: 'npm run dev:e2e',
     url: 'http://localhost:4321',
     reuseExistingServer: !process.env.CI,
     timeout: 120000,

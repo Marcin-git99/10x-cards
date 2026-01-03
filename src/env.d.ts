@@ -19,7 +19,8 @@ declare global {
 
 interface ImportMetaEnv {
   readonly SUPABASE_URL: string;
-  readonly SUPABASE_KEY: string;
+  readonly SUPABASE_KEY?: string;
+  readonly SUPABASE_PUBLIC_KEY?: string; // Alternative name for anon key
   readonly SUPABASE_SERVICE_ROLE_KEY: string;
   readonly OPENAI_API_KEY: string;
   readonly PROD: boolean;

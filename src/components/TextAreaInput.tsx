@@ -91,6 +91,7 @@ export function TextAreaInput({
         {/* Character counter */}
         <div 
           id={charCountId}
+          data-testid="char-counter"
           className={`text-sm transition-colors ${
             charCount > MAX_LENGTH 
               ? 'text-red-600' 

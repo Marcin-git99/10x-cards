@@ -29,11 +29,11 @@ export class FlashcardsPage extends BasePage {
   constructor(page: Page) {
     super(page);
     
-    this.flashcardsList = page.locator('[data-testid="flashcards-list"]');
-    this.flashcardCards = page.locator('[data-testid="flashcard-card"]');
+    this.flashcardsList = page.getByTestId('flashcards-list');
+    this.flashcardCards = page.getByTestId('flashcard-card');
     this.addFlashcardButton = page.getByRole('button', { name: /dodaj fiszkę/i });
-    this.emptyStateMessage = page.locator('[data-testid="empty-state"]');
-    this.pagination = page.locator('[data-testid="pagination"]');
+    this.emptyStateMessage = page.getByTestId('empty-state');
+    this.pagination = page.getByTestId('pagination');
     
     // Modal
     this.modal = page.locator('[role="dialog"]');

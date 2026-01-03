@@ -27,10 +27,10 @@ export class BasePage {
     
     // Header elements
     this.header = page.locator('header');
-    this.topbar = page.locator('[data-testid="topbar"]');
+    this.topbar = page.getByTestId('topbar');
     this.loginButton = page.getByRole('link', { name: /zaloguj/i });
     this.logoutButton = page.getByRole('button', { name: /wyloguj/i });
-    this.userAvatar = page.locator('[data-testid="user-avatar"]');
+    this.userAvatar = page.getByTestId('user-avatar');
   }
 
   /**

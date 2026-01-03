@@ -9,9 +9,13 @@ export type SupabaseClient = ReturnType<typeof createClient<Database>>;
 export type SupabaseServerClient = ReturnType<typeof createServerClient<Database>>;
 
 // Environment variables
+// Supports both SUPABASE_KEY and SUPABASE_PUBLIC_KEY for flexibility
 const supabaseUrl = import.meta.env.SUPABASE_URL || 'http://127.0.0.1:54321';
 const supabaseAnonKey =
-  import.meta.env.SUPABASE_KEY || 'sb_publishable_ACJWlzQHlZjBrEguHvfOxg_3BJgxAaH';
+  import.meta.env.SUPABASE_KEY ||
+  import.meta.env.SUPABASE_PUBLIC_KEY ||
+  'sb_publishable_ACJWlzQHlZjBrEguHvfOxg_3BJgxAaH';
+
 const supabaseServiceKey =
   import.meta.env.SUPABASE_SERVICE_ROLE_KEY || 'sb_secret_N7UND0UgjKTVK-Uodkm0Hg_xSvEMPvz';
 

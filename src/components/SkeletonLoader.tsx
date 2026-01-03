@@ -7,7 +7,7 @@ interface SkeletonLoaderProps {
 
 export const SkeletonLoader: React.FC<SkeletonLoaderProps> = ({ count = 3 }) => {
   return (
-    <div className="space-y-4 animate-pulse" role="status" aria-label="Ładowanie propozycji fiszek">
+    <div data-testid="loading-indicator" className="space-y-4 animate-pulse" role="status" aria-label="Ładowanie propozycji fiszek">
       {Array.from({ length: count }).map((_, index) => (
         <div 
           key={index} 
