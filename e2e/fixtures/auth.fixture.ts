@@ -47,6 +47,7 @@ export const test = base.extend<{
   /**
    * Test user credentials from environment
    */
+  // eslint-disable-next-line no-empty-pattern
   testUser: async ({}, use) => {
     const user = getTestUser();
     await use(user);

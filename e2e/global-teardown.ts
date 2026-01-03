@@ -19,8 +19,8 @@ import type { FullConfig } from '@playwright/test';
  * Note: This approach works when single developer runs tests.
  * For parallel multi-developer scenarios, consider isolated test databases.
  */
-async function globalTeardown(config: FullConfig) {
-  console.log('\n🧹 Starting E2E teardown - cleaning test data...\n');
+async function globalTeardown(_config: FullConfig) {
+  console.warn('\n🧹 Starting E2E teardown - cleaning test data...\n');
 
   // Get environment variables
   const supabaseUrl = process.env.SUPABASE_URL;
@@ -31,13 +31,13 @@ async function globalTeardown(config: FullConfig) {
   // Validate required environment variables
   if (!supabaseUrl || !supabaseKey) {
     console.error('❌ Missing SUPABASE_URL or SUPABASE_KEY environment variables');
-    console.log('Skipping teardown - no database connection available');
+    console.warn('Skipping teardown - no database connection available');
     return;
   }
 
   if (!e2eUsername || !e2ePassword) {
     console.error('❌ Missing E2E_USERNAME or E2E_PASSWORD environment variables');
-    console.log('Skipping teardown - cannot authenticate');
+    console.warn('Skipping teardown - cannot authenticate');
     return;
   }
 
@@ -46,7 +46,7 @@ async function globalTeardown(config: FullConfig) {
 
   try {
     // Step 1: Sign in as E2E test user to respect RLS
-    console.log('🔐 Signing in as E2E test user...');
+    console.warn('🔐 Signing in as E2E test user...');
     const { error: signInError } = await supabase.auth.signInWithPassword({
       email: e2eUsername,
       password: e2ePassword,
@@ -56,58 +56,55 @@ async function globalTeardown(config: FullConfig) {
       console.error('❌ Error signing in:', signInError.message);
       throw signInError;
     }
-    console.log('✅ Signed in successfully');
+    console.warn('✅ Signed in successfully');
 
     // Step 2: Clean tables in correct order (respect FK constraints)
     
     // 2a. Delete flashcards first (has FK to generations)
-    console.log('🗑️  Deleting flashcards...');
-    const { error: flashcardsError, count: flashcardsCount } = await supabase
+    console.warn('🗑️  Deleting flashcards...');
+    const { error: flashcardsError } = await supabase
       .from('flashcards')
       .delete()
-      .gte('id', 0) // Match all rows for the authenticated user (RLS handles filtering)
-      .select('*', { count: 'exact', head: true });
+      .gte('id', 0); // Match all rows for the authenticated user (RLS handles filtering)
 
     if (flashcardsError) {
       console.error('❌ Error deleting flashcards:', flashcardsError.message);
     } else {
-      console.log(`✅ Deleted flashcards`);
+      console.warn('✅ Deleted flashcards');
     }
 
     // 2b. Delete generations
-    console.log('🗑️  Deleting generations...');
-    const { error: generationsError, count: generationsCount } = await supabase
+    console.warn('🗑️  Deleting generations...');
+    const { error: generationsError } = await supabase
       .from('generations')
       .delete()
-      .gte('id', 0)
-      .select('*', { count: 'exact', head: true });
+      .gte('id', 0);
 
     if (generationsError) {
       console.error('❌ Error deleting generations:', generationsError.message);
     } else {
-      console.log(`✅ Deleted generations`);
+      console.warn('✅ Deleted generations');
     }
 
     // 2c. Delete generation error logs
-    console.log('🗑️  Deleting generation_error_logs...');
-    const { error: errorLogsError, count: errorLogsCount } = await supabase
+    console.warn('🗑️  Deleting generation_error_logs...');
+    const { error: errorLogsError } = await supabase
       .from('generation_error_logs')
       .delete()
-      .gte('id', 0)
-      .select('*', { count: 'exact', head: true });
+      .gte('id', 0);
 
     if (errorLogsError) {
       console.error('❌ Error deleting generation_error_logs:', errorLogsError.message);
     } else {
-      console.log(`✅ Deleted generation_error_logs`);
+      console.warn('✅ Deleted generation_error_logs');
     }
 
     // Step 3: Sign out
-    console.log('🚪 Signing out...');
+    console.warn('🚪 Signing out...');
     await supabase.auth.signOut();
-    console.log('✅ Signed out');
+    console.warn('✅ Signed out');
 
-    console.log('\n✨ E2E teardown completed successfully!\n');
+    console.warn('\n✨ E2E teardown completed successfully!\n');
 
   } catch (error) {
     console.error('\n❌ E2E teardown failed:', error);
