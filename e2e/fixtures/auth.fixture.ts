@@ -26,6 +26,14 @@ export function getTestUser(): TestUser {
   const email = process.env.E2E_USERNAME;
   const password = process.env.E2E_PASSWORD;
 
+  // Debug: log environment variables in CI
+  if (process.env.CI) {
+    console.warn('DEBUG getTestUser:');
+    console.warn('  E2E_USERNAME_ID:', id ? `set (${id.substring(0, 8)}...)` : 'NOT SET');
+    console.warn('  E2E_USERNAME:', email ? `set (${email})` : 'NOT SET');
+    console.warn('  E2E_PASSWORD:', password ? 'set (hidden)' : 'NOT SET');
+  }
+
   if (!id || !email || !password) {
     throw new Error(
       'E2E test user credentials not found. ' +
