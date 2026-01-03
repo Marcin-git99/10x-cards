@@ -47,7 +47,7 @@ export const test = base.extend<{
   /**
    * Test user credentials from environment
    */
-  testUser: async (_, use) => {
+  testUser: async ({}, use) => {
     const user = getTestUser();
     await use(user);
   },
