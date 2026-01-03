@@ -1,0 +1,163 @@
+# GitHub Actions workflow for Pull Request verification
+# Zgodnie z kursem: Lint → (Unit test ║ E2E test) → Status Comment
+
+name: Pull Request Check
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened]
+
+jobs:
+  # ============================================
+  # 1. Linting - pierwsza bramka jakości
+  # ============================================
+  lint:
+    name: 🔍 Lint Code
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run ESLint
+        run: npm run lint
+
+  # ============================================
+  # 2a. Unit Tests - równolegle z E2E (po lint)
+  # ============================================
+  unit-test:
+    name: 🧪 Unit Tests
+    runs-on: ubuntu-latest
+    needs: lint
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run unit tests with coverage
+        run: npm run test:coverage
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage-report
+          path: coverage/
+          retention-days: 30
+
+  # ============================================
+  # 2b. E2E Tests - równolegle z Unit (po lint)
+  # ============================================
+  e2e-test:
+    name: 🎭 E2E Tests
+    runs-on: ubuntu-latest
+    needs: lint
+    environment: integration
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Run E2E tests
+        run: npm run test:e2e
+        env:
+          CI: true
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_PUBLIC_KEY: ${{ secrets.SUPABASE_PUBLIC_KEY }}
+          E2E_USERNAME: ${{ secrets.E2E_USERNAME }}
+          E2E_PASSWORD: ${{ secrets.E2E_PASSWORD }}
+
+      - name: Upload Playwright report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 30
+
+  # ============================================
+  # 3. Status Comment - podsumowanie do PR
+  # ============================================
+  status-comment:
+    name: 💬 Status Comment
+    runs-on: ubuntu-latest
+    needs: [unit-test, e2e-test]
+    if: always()
+    
+    permissions:
+      pull-requests: write
+    
+    steps:
+      - name: Create status comment
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const unitResult = '${{ needs.unit-test.result }}';
+            const e2eResult = '${{ needs.e2e-test.result }}';
+            
+            const getEmoji = (result) => {
+              switch(result) {
+                case 'success': return '✅';
+                case 'failure': return '❌';
+                case 'cancelled': return '⚪';
+                case 'skipped': return '⏭️';
+                default: return '❓';
+              }
+            };
+            
+            const allPassed = unitResult === 'success' && e2eResult === 'success';
+            
+            const body = `## 🔄 Pull Request Check Results
+            
+            | Test | Status |
+            |------|--------|
+            | 🧪 Unit Tests | ${getEmoji(unitResult)} ${unitResult} |
+            | 🎭 E2E Tests | ${getEmoji(e2eResult)} ${e2eResult} |
+            
+            ${allPassed 
+              ? '### ✅ All checks passed! Ready for review.' 
+              : '### ⚠️ Some checks failed. Please review the logs.'}
+            
+            ---
+            *Automated comment by GitHub Actions*`;
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: body
+            });
+
