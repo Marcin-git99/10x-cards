@@ -3,10 +3,12 @@ import * as path from 'path';
 import dotenv from 'dotenv';
 
 /**
- * Load environment variables from .env.test for E2E tests
- * This provides access to E2E_USERNAME, E2E_PASSWORD, etc.
+ * Load environment variables from .env.test for E2E tests (local development)
+ * In CI, variables are injected via GitHub secrets - don't override them
  */
-dotenv.config({ path: path.resolve(process.cwd(), '.env.test') });
+if (!process.env.CI) {
+  dotenv.config({ path: path.resolve(process.cwd(), '.env.test') });
+}
 
 /**
  * Playwright configuration for E2E tests
