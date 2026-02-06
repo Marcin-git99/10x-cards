@@ -1,0 +1,31 @@
+name: Keepalive Ping
+
+# Co 3 dni ping do produkcji (Vercel → middleware → Supabase getUser),
+# żeby projekt Supabase nie był wstrzymywany po 7 dniach nieaktywności.
+on:
+  schedule:
+    # Co 3 dni o 09:00 czasu PL (CET = 08:00 UTC)
+    - cron: "0 8 */3 * *"
+  workflow_dispatch:
+
+jobs:
+  ping:
+    name: Ping public app endpoint
+    runs-on: ubuntu-latest
+    env:
+      # Ping co 3 dni przez 30 dni od START_DATE. Po 30 dniach harmonogram nadal się uruchamia, ale krok pomija wysyłanie.
+      START_DATE: "2026-02-06"
+    steps:
+      - name: Keepalive ping (only within 30-day window)
+        run: |
+          start_ts=$(date -u -d "${START_DATE}T00:00:00Z" +%s)
+          now_ts=$(date -u +%s)
+          days_elapsed=$(( (now_ts - start_ts) / 86400 ))
+          if [ "$days_elapsed" -gt 30 ]; then
+            echo "Keepalive window ended (${days_elapsed} days). Skipping ping."
+            exit 0
+          fi
+          echo "Keepalive window active (day ${days_elapsed}/30)."
+          code=$(curl -s -o /dev/null -w "%{http_code}" "https://10x-cards-ebon.vercel.app/api/flashcards")
+          echo "HTTP $code (401 = brak sesji, ale ruch na Supabase jest zaliczony)"
+          if [ "$code" = "000" ]; then exit 1; fi
