@@ -1,5 +1,6 @@
 # GitHub Actions workflow for Pull Request verification
 # Zgodnie z kursem: Lint → (Unit test ║ E2E test) → Status Comment
+# workflow_dispatch: ręczne uruchomienie testów (m.in. ruch na Supabase, weryfikacja przed oceną)
 
 name: Pull Request Check
 
@@ -7,6 +8,7 @@ on:
   pull_request:
     branches: [main]
     types: [opened, synchronize, reopened]
+  workflow_dispatch:
 
 jobs:
   # ============================================
@@ -133,7 +135,7 @@ jobs:
     name: 💬 Status Comment
     runs-on: ubuntu-latest
     needs: [unit-test, e2e-test]
-    if: always()
+    if: always() && github.event_name == 'pull_request'
     
     permissions:
       pull-requests: write
