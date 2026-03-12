@@ -8,8 +8,8 @@ export default function ButtonDemo() {
   return (
     <div className="grid place-items-center h-screen content-center gap-4">
       <div className="text-center space-y-4">
-        <h1 className="text-4xl font-bold text-gray-900">10x Cards</h1>
-        <p className="text-lg text-gray-600 max-w-md">
+        <h1 className="text-4xl font-bold text-foreground">10x Cards</h1>
+        <p className="text-lg text-muted-foreground max-w-md">
           Generuj fiszki do nauki przy pomocy sztucznej inteligencji
         </p>
         <Button onClick={handleClick} size="lg" className="mt-6">

@@ -59,50 +59,38 @@ export const GenerateView: React.FC<GenerateViewProps> = ({
       await actions.generateFlashcards(state.sourceText);
     } catch (error) {
       console.error('Generation failed:', error);
-      // Error is handled by the hook
     }
   }, [textValidation.isValid, state.isGenerating, state.sourceText, actions]);
 
   // Handle saving flashcards
   const handleSave = useCallback(async (mode: 'selected' | 'all' | 'custom') => {
-    // Check if user is authenticated (US-004)
     if (!isAuthenticated) {
-      // Redirect to login page with return URL
       window.location.href = '/auth/login';
       return;
     }
 
     try {
-      // Determine total count for progress
       const totalToSave = mode === 'selected' 
         ? bulkSelectionState.selectedCount 
         : state.proposals.length;
       
       startSave(totalToSave);
       
-      // Simulate progress updates if needed, or just rely on the API call duration
-      // For now, we just wait for the API call
-      
       const savedFlashcards = await actions.saveFlashcards(mode);
       
       completeSave();
       
-      // Show success message and optionally redirect
       if (savedFlashcards && savedFlashcards.length > 0) {
-        // Could show a toast notification here
         console.log(`Successfully saved ${savedFlashcards.length} flashcards`);
         
-        // Reset progress after a delay
         setTimeout(() => {
           resetProgress();
-          // Optionally redirect to flashcards page after successful save
           window.location.href = '/flashcards';
         }, 1500);
       }
     } catch (error) {
       console.error('Save failed:', error);
       failSave(error instanceof Error ? error.message : 'Błąd zapisu');
-      // Error is also handled by the hook
     }
   }, [actions, bulkSelectionState.selectedCount, state.proposals.length, startSave, completeSave, failSave, resetProgress, isAuthenticated]);
 
@@ -126,7 +114,7 @@ export const GenerateView: React.FC<GenerateViewProps> = ({
       )}
 
       {/* Text Input Section */}
-      <section className="bg-white rounded-lg shadow-sm border border-gray-200">
+      <section className="bg-card rounded-lg shadow-sm border border-border">
         <div className="p-6">
           <div className="space-y-4">
             <div>
@@ -174,22 +162,22 @@ export const GenerateView: React.FC<GenerateViewProps> = ({
       {/* Generation Results Section */}
       {(state.proposals.length > 0 || state.generationResult) && !state.isGenerating && (
         <section id="generation-results" className="scroll-mt-8">
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+          <div className="bg-card rounded-lg shadow-sm border border-border">
             {/* Results Header */}
-            <div className="border-b border-gray-200 p-6">
+            <div className="border-b border-border p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <h2 className="text-xl font-semibold text-gray-900">
+                  <h2 className="text-xl font-semibold text-foreground">
                     Propozycje fiszek
                   </h2>
-                  <p className="mt-1 text-sm text-gray-600">
+                  <p className="mt-1 text-sm text-muted-foreground">
                     Przejrzyj propozycje wygenerowane przez AI. Możesz je edytować przed zapisaniem.
                   </p>
                 </div>
                 <div className="flex items-center space-x-3">
-                  <span className="text-sm text-gray-500">
+                  <span className="text-sm text-muted-foreground">
                     {state.generationResult && (
-                      <span className="text-green-600 font-medium">
+                      <span className="text-emerald-600 dark:text-emerald-400 font-medium">
                         Wygenerowano {state.generationResult.generated_count} fiszek
                       </span>
                     )}
@@ -200,18 +188,18 @@ export const GenerateView: React.FC<GenerateViewProps> = ({
 
             {/* Bulk Actions Bar */}
             {state.proposals.length > 0 && (
-              <div className="border-b border-gray-200 p-4 bg-gray-50">
+              <div className="border-b border-border p-4 bg-muted">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-4">
-                    <span data-testid="selected-count" className="text-sm text-gray-600">
-                      <span className="font-medium text-gray-900">{bulkSelectionState.selectedCount}</span> z{' '}
-                      <span className="font-medium text-gray-900">{state.proposals.length}</span> zaznaczonych
+                    <span data-testid="selected-count" className="text-sm text-muted-foreground">
+                      <span className="font-medium text-foreground">{bulkSelectionState.selectedCount}</span> z{' '}
+                      <span className="font-medium text-foreground">{state.proposals.length}</span> zaznaczonych
                     </span>
                   </div>
                   <div className="flex items-center space-x-3">
                     {!isAuthenticated && (
-                      <span className="text-sm text-amber-600">
-                        <a href="/auth/login" className="underline hover:text-amber-700">Zaloguj się</a>, aby zapisać fiszki
+                      <span className="text-sm text-amber-600 dark:text-amber-400">
+                        <a href="/auth/login" className="underline hover:text-amber-700 dark:hover:text-amber-300">Zaloguj się</a>, aby zapisać fiszki
                       </span>
                     )}
                     <BulkSaveButton
@@ -242,7 +230,7 @@ export const GenerateView: React.FC<GenerateViewProps> = ({
       )}
 
       {/* Help Section */}
-      <section className="text-center text-sm text-gray-500">
+      <section className="text-center text-sm text-muted-foreground">
         <p className="mb-2">
           💡 <strong>Wskazówka:</strong> Dla najlepszych rezultatów, wprowadź tekst zawierający jasno zdefiniowane pojęcia,
           definicje, lub informacje które można przekształcić w pytania i odpowiedzi.

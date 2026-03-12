@@ -102,8 +102,8 @@ export const ProposalCard: React.FC<ProposalCardProps> = ({
     <div
       data-testid="proposal-card"
       className={`
-        relative bg-white border rounded-lg p-4 transition-all duration-200
-        ${proposal.isSelected ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'}
+        relative bg-card border rounded-lg p-4 transition-all duration-200
+        ${proposal.isSelected ? 'border-primary bg-primary/5' : 'border-border hover:border-border'}
         ${disabled ? 'opacity-50 cursor-not-allowed' : 'hover:shadow-sm'}
         ${className}
       `}
@@ -125,7 +125,7 @@ export const ProposalCard: React.FC<ProposalCardProps> = ({
           <div className="mb-4">
             <Label className="block mb-2 text-muted-foreground">
               Przód fiszki
-              {isEdited && <span className="text-blue-600 text-xs ml-1">(edytowane)</span>}
+              {isEdited && <span className="text-primary text-xs ml-1">(edytowane)</span>}
             </Label>
             {proposal.isEditing ? (
               <div className="space-y-1">
@@ -137,7 +137,7 @@ export const ProposalCard: React.FC<ProposalCardProps> = ({
                   maxLength={200}
                   className={`
                     w-full p-3 text-sm rounded-lg resize-none
-                    ${frontValid ? 'border-gray-300' : 'border-destructive focus-visible:ring-destructive'}
+                    ${frontValid ? 'border-border' : 'border-destructive focus-visible:ring-destructive'}
                   `}
                   placeholder="Wprowadź tekst dla przodu fiszki..."
                   aria-describedby={`front-char-count-${proposal.id} ${!frontValid ? `front-error-${proposal.id}` : ''}`}
@@ -182,7 +182,7 @@ export const ProposalCard: React.FC<ProposalCardProps> = ({
                   maxLength={500}
                   className={`
                     w-full p-3 text-sm rounded-lg resize-none
-                    ${backValid ? 'border-gray-300' : 'border-destructive focus-visible:ring-destructive'}
+                    ${backValid ? 'border-border' : 'border-destructive focus-visible:ring-destructive'}
                   `}
                   placeholder="Wprowadź tekst dla tyłu fiszki..."
                   aria-describedby={`back-char-count-${proposal.id} ${!backValid ? `back-error-${proposal.id}` : ''}`}
@@ -228,7 +228,7 @@ export const ProposalCard: React.FC<ProposalCardProps> = ({
                   type="button"
                   onClick={handleSave}
                   disabled={disabled || !isValid}
-                  className="px-3 py-1.5 text-sm text-primary-foreground bg-green-600 hover:bg-green-700 disabled:bg-muted disabled:cursor-not-allowed rounded-md transition-colors"
+                  className="px-3 py-1.5 text-sm text-primary-foreground bg-emerald-600 hover:bg-emerald-700 dark:bg-emerald-600 dark:hover:bg-emerald-500 disabled:bg-muted disabled:cursor-not-allowed rounded-md transition-colors"
                   title={!isValid ? 'Popraw błędy walidacji przed zapisaniem' : 'Zapisz zmiany (Ctrl+S)'}
                 >
                   Zapisz
@@ -239,7 +239,7 @@ export const ProposalCard: React.FC<ProposalCardProps> = ({
                 type="button"
                 onClick={handleEdit}
                 disabled={disabled}
-                className="px-3 py-1.5 text-sm text-blue-600 hover:text-blue-800 border border-blue-300 rounded-md hover:bg-blue-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="px-3 py-1.5 text-sm text-primary hover:text-primary/80 border border-primary/30 rounded-md hover:bg-primary/5 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 Edytuj
               </button>

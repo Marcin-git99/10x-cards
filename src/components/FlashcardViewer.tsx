@@ -46,7 +46,7 @@ export function FlashcardViewer({ flashcards }: FlashcardViewerProps) {
   if (!currentCard) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <p className="text-gray-500">Brak fiszek do wyświetlenia</p>
+        <p className="text-muted-foreground">Brak fiszek do wyświetlenia</p>
       </div>
     );
   }
@@ -61,7 +61,7 @@ export function FlashcardViewer({ flashcards }: FlashcardViewerProps) {
     >
       {/* Progress indicator */}
       <div className="flex items-center gap-4">
-        <span className="text-sm text-gray-600 font-medium">
+        <span className="text-sm text-muted-foreground font-medium">
           Fiszka {currentIndex + 1} z {totalCards}
         </span>
         <div className="flex gap-1">
@@ -75,7 +75,7 @@ export function FlashcardViewer({ flashcards }: FlashcardViewerProps) {
               className={`w-2 h-2 rounded-full transition-all ${
                 idx === currentIndex 
                   ? 'bg-emerald-500 w-4' 
-                  : 'bg-gray-300 hover:bg-gray-400'
+                  : 'bg-muted-foreground/30 hover:bg-muted-foreground/50'
               }`}
               aria-label={`Przejdź do fiszki ${idx + 1}`}
             />
@@ -151,7 +151,7 @@ export function FlashcardViewer({ flashcards }: FlashcardViewerProps) {
           variant="default"
           size="lg"
           onClick={handleFlip}
-          className="min-w-[140px] bg-emerald-600 hover:bg-emerald-700"
+          className="min-w-[140px] bg-emerald-600 hover:bg-emerald-700 dark:bg-emerald-600 dark:hover:bg-emerald-500"
         >
           {isFlipped ? 'Pokaż pytanie' : 'Pokaż odpowiedź'}
         </Button>
@@ -170,12 +170,11 @@ export function FlashcardViewer({ flashcards }: FlashcardViewerProps) {
       </div>
       
       {/* Keyboard hint */}
-      <p className="text-sm text-gray-500 text-center">
-        <kbd className="px-2 py-1 bg-gray-100 rounded text-xs">←</kbd> poprzednia &nbsp;
-        <kbd className="px-2 py-1 bg-gray-100 rounded text-xs">Spacja</kbd> odwróć &nbsp;
-        <kbd className="px-2 py-1 bg-gray-100 rounded text-xs">→</kbd> następna
+      <p className="text-sm text-muted-foreground text-center">
+        <kbd className="px-2 py-1 bg-muted rounded text-xs">←</kbd> poprzednia &nbsp;
+        <kbd className="px-2 py-1 bg-muted rounded text-xs">Spacja</kbd> odwróć &nbsp;
+        <kbd className="px-2 py-1 bg-muted rounded text-xs">→</kbd> następna
       </p>
     </div>
   );
 }
-

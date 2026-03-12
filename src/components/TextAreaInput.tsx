@@ -46,11 +46,11 @@ export function TextAreaInput({
   // Determine input styling based on validation state
   const inputClassName = (() => {
     if (displayError) {
-      return `border-red-300 focus-visible:ring-red-500 focus-visible:border-red-500 ${className}`;
+      return `border-destructive/50 focus-visible:ring-destructive focus-visible:border-destructive ${className}`;
     }
     
     if (isValid) {
-      return `border-green-300 focus-visible:ring-green-500 focus-visible:border-green-500 ${className}`;
+      return `border-emerald-400 dark:border-emerald-600 focus-visible:ring-emerald-500 focus-visible:border-emerald-500 ${className}`;
     }
     
     return className;
@@ -94,9 +94,9 @@ export function TextAreaInput({
           data-testid="char-counter"
           className={`text-sm transition-colors ${
             charCount > MAX_LENGTH 
-              ? 'text-red-600' 
+              ? 'text-destructive' 
               : charCount >= 8000 
-                ? 'text-yellow-600' 
+                ? 'text-yellow-600 dark:text-yellow-400' 
                 : 'text-muted-foreground'
           }`}
         >

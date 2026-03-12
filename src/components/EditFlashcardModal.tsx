@@ -29,7 +29,6 @@ export function EditFlashcardModal({ flashcard, open, onOpenChange, onSave }: Ed
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Reset form when flashcard changes
   useEffect(() => {
     if (flashcard) {
       setFront(flashcard.front);
@@ -43,7 +42,6 @@ export function EditFlashcardModal({ flashcard, open, onOpenChange, onSave }: Ed
     
     if (!flashcard) return;
     
-    // Walidacja
     if (!front.trim()) {
       setError('Przód fiszki nie może być pusty');
       return;
@@ -95,7 +93,7 @@ export function EditFlashcardModal({ flashcard, open, onOpenChange, onSave }: Ed
         <form onSubmit={handleSubmit}>
           <div className="px-6 space-y-4">
             {error && (
-              <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
+              <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-lg text-sm text-destructive">
                 {error}
               </div>
             )}
@@ -103,7 +101,7 @@ export function EditFlashcardModal({ flashcard, open, onOpenChange, onSave }: Ed
             <div className="space-y-2">
               <Label htmlFor="edit-front">
                 Przód (pytanie)
-                <span className="ml-2 text-xs text-gray-400">
+                <span className="ml-2 text-xs text-muted-foreground">
                   {front.length}/{MAX_FRONT_LENGTH}
                 </span>
               </Label>
@@ -115,14 +113,14 @@ export function EditFlashcardModal({ flashcard, open, onOpenChange, onSave }: Ed
                 rows={3}
                 maxLength={MAX_FRONT_LENGTH}
                 disabled={isSaving}
-                className={front.length > MAX_FRONT_LENGTH ? 'border-red-500' : ''}
+                className={front.length > MAX_FRONT_LENGTH ? 'border-destructive' : ''}
               />
             </div>
             
             <div className="space-y-2">
               <Label htmlFor="edit-back">
                 Tył (odpowiedź)
-                <span className="ml-2 text-xs text-gray-400">
+                <span className="ml-2 text-xs text-muted-foreground">
                   {back.length}/{MAX_BACK_LENGTH}
                 </span>
               </Label>
@@ -134,7 +132,7 @@ export function EditFlashcardModal({ flashcard, open, onOpenChange, onSave }: Ed
                 rows={4}
                 maxLength={MAX_BACK_LENGTH}
                 disabled={isSaving}
-                className={back.length > MAX_BACK_LENGTH ? 'border-red-500' : ''}
+                className={back.length > MAX_BACK_LENGTH ? 'border-destructive' : ''}
               />
             </div>
           </div>
@@ -151,7 +149,7 @@ export function EditFlashcardModal({ flashcard, open, onOpenChange, onSave }: Ed
             <Button
               type="submit"
               disabled={isSaving || !front.trim() || !back.trim()}
-              className="bg-emerald-600 hover:bg-emerald-700"
+              className="bg-emerald-600 hover:bg-emerald-700 dark:bg-emerald-600 dark:hover:bg-emerald-500"
             >
               {isSaving ? 'Zapisywanie...' : 'Zapisz zmiany'}
             </Button>
@@ -161,4 +159,3 @@ export function EditFlashcardModal({ flashcard, open, onOpenChange, onSave }: Ed
     </Dialog>
   );
 }
-

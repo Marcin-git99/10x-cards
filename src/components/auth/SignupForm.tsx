@@ -67,7 +67,6 @@ export default function SignupForm() {
           if (data.needsEmailConfirmation) {
             setSuccess('Account created! Please check your email for a verification link.');
           } else {
-            // Auto-confirmed - redirect to generate page (US-001)
             window.location.href = '/generate';
           }
         } else {
@@ -86,19 +85,18 @@ export default function SignupForm() {
     [email, password, confirmPassword, validateForm]
   );
 
-  // If registration successful and needs email confirmation, show success view
   if (success) {
     return (
       <div className="space-y-6 text-center pt-2">
-        <Alert className="bg-green-50 border-green-200 py-6">
-          <AlertDescription className="text-green-700 font-medium">
+        <Alert className="bg-emerald-50 border-emerald-200 dark:bg-emerald-950/30 dark:border-emerald-800 py-6">
+          <AlertDescription className="text-emerald-700 dark:text-emerald-300 font-medium">
             {success}
           </AlertDescription>
         </Alert>
         <div className="pt-2">
           <a
             href="/auth/login"
-            className="font-semibold text-blue-600 hover:text-blue-500 transition-colors"
+            className="font-semibold text-primary hover:text-primary/80 transition-colors"
           >
             Return to login
           </a>
@@ -116,16 +114,16 @@ export default function SignupForm() {
       )}
 
       <div className="space-y-2">
-        <Label htmlFor="email" className="text-sm font-semibold text-gray-700">Email address</Label>
+        <Label htmlFor="email" className="text-sm font-semibold text-foreground">Email address</Label>
         <div className="relative">
-          <Mail className="absolute left-3 top-3.5 h-4 w-4 text-gray-400" />
+          <Mail className="absolute left-3 top-3.5 h-4 w-4 text-muted-foreground" />
           <Input
             id="email"
             name="email"
             type="email"
             autoComplete="email"
             placeholder="Enter your email"
-            className="pl-10 h-11 border-gray-200 focus:border-black focus:ring-0 focus-visible:ring-0 transition-all"
+            className="pl-10 h-11 border-input focus:border-foreground focus:ring-0 focus-visible:ring-0 transition-all"
             value={email}
             onChange={(e) => {
               setEmail(e.target.value);
@@ -134,20 +132,20 @@ export default function SignupForm() {
             disabled={isLoading}
           />
         </div>
-        {fieldErrors.email && <p className="text-xs text-red-500 mt-1">{fieldErrors.email}</p>}
+        {fieldErrors.email && <p className="text-xs text-destructive mt-1">{fieldErrors.email}</p>}
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="password" className="text-sm font-semibold text-gray-700">Password</Label>
+        <Label htmlFor="password" className="text-sm font-semibold text-foreground">Password</Label>
         <div className="relative">
-          <Lock className="absolute left-3 top-3.5 h-4 w-4 text-gray-400" />
+          <Lock className="absolute left-3 top-3.5 h-4 w-4 text-muted-foreground" />
           <Input
             id="password"
             name="password"
             type="password"
             autoComplete="new-password"
             placeholder="Minimum 8 characters"
-            className="pl-10 h-11 border-gray-200 focus:border-black focus:ring-0 focus-visible:ring-0 transition-all"
+            className="pl-10 h-11 border-input focus:border-foreground focus:ring-0 focus-visible:ring-0 transition-all"
             value={password}
             onChange={(e) => {
               setPassword(e.target.value);
@@ -156,20 +154,20 @@ export default function SignupForm() {
             disabled={isLoading}
           />
         </div>
-        {fieldErrors.password && <p className="text-xs text-red-500 mt-1">{fieldErrors.password}</p>}
+        {fieldErrors.password && <p className="text-xs text-destructive mt-1">{fieldErrors.password}</p>}
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="confirmPassword" className="text-sm font-semibold text-gray-700">Confirm Password</Label>
+        <Label htmlFor="confirmPassword" className="text-sm font-semibold text-foreground">Confirm Password</Label>
         <div className="relative">
-          <Lock className="absolute left-3 top-3.5 h-4 w-4 text-gray-400" />
+          <Lock className="absolute left-3 top-3.5 h-4 w-4 text-muted-foreground" />
           <Input
             id="confirmPassword"
             name="confirmPassword"
             type="password"
             autoComplete="new-password"
             placeholder="Repeat your password"
-            className="pl-10 h-11 border-gray-200 focus:border-black focus:ring-0 focus-visible:ring-0 transition-all"
+            className="pl-10 h-11 border-input focus:border-foreground focus:ring-0 focus-visible:ring-0 transition-all"
             value={confirmPassword}
             onChange={(e) => {
               setConfirmPassword(e.target.value);
@@ -178,20 +176,20 @@ export default function SignupForm() {
             disabled={isLoading}
           />
         </div>
-        {fieldErrors.confirmPassword && <p className="text-xs text-red-500 mt-1">{fieldErrors.confirmPassword}</p>}
+        {fieldErrors.confirmPassword && <p className="text-xs text-destructive mt-1">{fieldErrors.confirmPassword}</p>}
       </div>
 
       <Button 
         type="submit" 
-        className="w-full h-11 bg-gray-900 hover:bg-black text-white font-semibold rounded-md transition-all" 
+        className="w-full h-11 font-semibold rounded-md transition-all" 
         disabled={isLoading}
       >
         {isLoading ? 'Creating account...' : 'Create account'}
       </Button>
 
-      <div className="text-center text-sm text-gray-500 pt-2">
+      <div className="text-center text-sm text-muted-foreground pt-2">
         Already have an account?{' '}
-        <a href="/auth/login" className="font-semibold text-gray-900 hover:underline">
+        <a href="/auth/login" className="font-semibold text-foreground hover:underline">
           Sign in
         </a>
       </div>

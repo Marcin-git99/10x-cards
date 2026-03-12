@@ -50,7 +50,7 @@ export default function ResetPasswordForm() {
 
         if (response.ok) {
           setSuccess(data.message);
-          setEmail(''); // Clear form on success
+          setEmail('');
         } else {
           throw new Error(data.message || 'Wystąpił błąd');
         }
@@ -77,7 +77,7 @@ export default function ResetPasswordForm() {
 
       {success && (
         <Alert>
-          <AlertDescription className="text-green-600">{success}</AlertDescription>
+          <AlertDescription className="text-emerald-600 dark:text-emerald-400">{success}</AlertDescription>
         </Alert>
       )}
 
@@ -101,11 +101,11 @@ export default function ResetPasswordForm() {
           aria-describedby={fieldErrors.email ? 'email-error' : undefined}
         />
         {fieldErrors.email && (
-          <p id="email-error" className="text-sm text-red-500">
+          <p id="email-error" className="text-sm text-destructive">
             {fieldErrors.email}
           </p>
         )}
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-muted-foreground">
           Wprowadź adres email powiązany z Twoim kontem. Wyślemy Ci link do resetowania hasła.
         </p>
       </div>
@@ -114,13 +114,12 @@ export default function ResetPasswordForm() {
         {isLoading ? 'Wysyłanie...' : 'Wyślij link resetujący'}
       </Button>
 
-      <div className="text-center text-sm text-gray-600">
+      <div className="text-center text-sm text-muted-foreground">
         Pamiętasz hasło?{' '}
-        <a href="/auth/login" className="font-medium text-blue-600 hover:text-blue-500">
+        <a href="/auth/login" className="font-medium text-primary hover:text-primary/80">
           Zaloguj się
         </a>
       </div>
     </form>
   );
 }
-

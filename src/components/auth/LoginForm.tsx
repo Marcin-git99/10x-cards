@@ -51,7 +51,6 @@ export default function LoginForm() {
         });
 
         if (response.ok) {
-          // Redirect to generate page on successful login (US-002)
           window.location.href = '/generate';
         } else {
           const data = await response.json();
@@ -79,16 +78,16 @@ export default function LoginForm() {
       )}
 
       <div className="space-y-2">
-        <Label htmlFor="email" className="text-sm font-semibold text-gray-700">Email address</Label>
+        <Label htmlFor="email" className="text-sm font-semibold text-foreground">Email address</Label>
         <div className="relative">
-          <Mail className="absolute left-3 top-3.5 h-4 w-4 text-gray-400" />
+          <Mail className="absolute left-3 top-3.5 h-4 w-4 text-muted-foreground" />
           <Input
             id="email"
             name="email"
             type="email"
             autoComplete="email"
             placeholder="Enter your email"
-            className="pl-10 h-11 border-gray-200 focus:border-black focus:ring-0 focus-visible:ring-0 transition-all"
+            className="pl-10 h-11 border-input focus:border-foreground focus:ring-0 focus-visible:ring-0 transition-all"
             value={email}
             onChange={(e) => {
               setEmail(e.target.value);
@@ -97,20 +96,20 @@ export default function LoginForm() {
             disabled={isLoading}
           />
         </div>
-        {fieldErrors.email && <p className="text-xs text-red-500 mt-1">{fieldErrors.email}</p>}
+        {fieldErrors.email && <p className="text-xs text-destructive mt-1">{fieldErrors.email}</p>}
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="password" className="text-sm font-semibold text-gray-700">Password</Label>
+        <Label htmlFor="password" className="text-sm font-semibold text-foreground">Password</Label>
         <div className="relative">
-          <Lock className="absolute left-3 top-3.5 h-4 w-4 text-gray-400" />
+          <Lock className="absolute left-3 top-3.5 h-4 w-4 text-muted-foreground" />
           <Input
             id="password"
             name="password"
             type="password"
             autoComplete="current-password"
             placeholder="Enter your password"
-            className="pl-10 h-11 border-gray-200 focus:border-black focus:ring-0 focus-visible:ring-0 transition-all"
+            className="pl-10 h-11 border-input focus:border-foreground focus:ring-0 focus-visible:ring-0 transition-all"
             value={password}
             onChange={(e) => {
               setPassword(e.target.value);
@@ -119,13 +118,13 @@ export default function LoginForm() {
             disabled={isLoading}
           />
         </div>
-        {fieldErrors.password && <p className="text-xs text-red-500 mt-1">{fieldErrors.password}</p>}
+        {fieldErrors.password && <p className="text-xs text-destructive mt-1">{fieldErrors.password}</p>}
       </div>
 
       <div className="flex items-center">
         <a
           href="/auth/reset-password"
-          className="text-sm font-semibold text-gray-900 hover:underline"
+          className="text-sm font-semibold text-foreground hover:underline"
         >
           Forgot your password?
         </a>
@@ -133,15 +132,15 @@ export default function LoginForm() {
 
       <Button 
         type="submit" 
-        className="w-full h-11 bg-gray-900 hover:bg-black text-white font-semibold rounded-md transition-all" 
+        className="w-full h-11 font-semibold rounded-md transition-all" 
         disabled={isLoading}
       >
         {isLoading ? 'Signing in...' : 'Sign in'}
       </Button>
 
-      <div className="text-center text-sm text-gray-500 pt-2">
+      <div className="text-center text-sm text-muted-foreground pt-2">
         Don&apos;t have an account?{' '}
-        <a href="/auth/signup" className="font-semibold text-gray-900 hover:underline">
+        <a href="/auth/signup" className="font-semibold text-foreground hover:underline">
           Sign up
         </a>
       </div>

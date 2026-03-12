@@ -16,7 +16,6 @@ export default function ResetPasswordWrapper() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
-    // Check for error in query params (e.g., expired token)
     const queryParams = new URLSearchParams(window.location.search);
     const error = queryParams.get('error');
     const errorCode = queryParams.get('error_code');
@@ -32,12 +31,10 @@ export default function ResetPasswordWrapper() {
       }
       setMode('request');
       
-      // Clean up URL
       window.history.replaceState(null, '', window.location.pathname);
       return;
     }
 
-    // Check URL hash for tokens (Supabase puts them in fragment)
     const hash = window.location.hash.substring(1);
     const hashParams = new URLSearchParams(hash);
     
@@ -50,7 +47,6 @@ export default function ResetPasswordWrapper() {
       setRefreshToken(refresh);
       setMode('set');
       
-      // Clean up URL (remove hash)
       window.history.replaceState(null, '', window.location.pathname);
     } else {
       setMode('request');
@@ -60,7 +56,7 @@ export default function ResetPasswordWrapper() {
   if (mode === 'loading') {
     return (
       <div className="flex items-center justify-center py-8">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-foreground"></div>
       </div>
     );
   }
@@ -85,4 +81,3 @@ export default function ResetPasswordWrapper() {
     </div>
   );
 }
-

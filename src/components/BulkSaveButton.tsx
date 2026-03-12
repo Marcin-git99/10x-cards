@@ -31,7 +31,6 @@ export const BulkSaveButton: React.FC<BulkSaveButtonProps> = ({
   const [showConfirmDialog, setShowConfirmDialog] = useState<SaveMode | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -43,7 +42,6 @@ export const BulkSaveButton: React.FC<BulkSaveButtonProps> = ({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Handle keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.ctrlKey || event.metaKey) {
@@ -68,7 +66,6 @@ export const BulkSaveButton: React.FC<BulkSaveButtonProps> = ({
   const handleSave = useCallback(async (mode: SaveMode, options?: SaveOptions) => {
     const count = mode === 'selected' ? selectedCount : totalCount;
     
-    // Show confirmation for large operations
     if (count > 20 && !showConfirmDialog) {
       setShowConfirmDialog(mode);
       return;
@@ -90,27 +87,23 @@ export const BulkSaveButton: React.FC<BulkSaveButtonProps> = ({
     }
   }, [disabled, loading, isDropdownOpen]);
 
-  // Main button (Save Selected) disabled state
   const mainButtonDisabled = disabled || loading || selectedCount === 0;
-  
-  // Save All disabled state
   const saveAllDisabled = disabled || loading || totalCount === 0;
 
-  // Progress display
   if (loading && progress) {
     return (
       <div className={cn("flex items-center gap-3", className)}>
-        <div className="flex items-center gap-2 px-4 py-2 bg-blue-50 border border-blue-200 rounded-lg">
-          <Loader2 className="h-4 w-4 animate-spin text-blue-600" />
-          <span className="text-sm text-blue-800">
+        <div className="flex items-center gap-2 px-4 py-2 bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-lg">
+          <Loader2 className="h-4 w-4 animate-spin text-blue-600 dark:text-blue-400" />
+          <span className="text-sm text-blue-800 dark:text-blue-200">
             {progress.message || `Zapisywanie... ${progress.current}/${progress.total}`}
           </span>
         </div>
         {progress.total > 1 && (
           <div className="flex-1 max-w-48">
-            <div className="w-full bg-gray-200 rounded-full h-2">
+            <div className="w-full bg-muted rounded-full h-2">
               <div
-                className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                className="bg-blue-600 dark:bg-blue-400 h-2 rounded-full transition-all duration-300"
                 style={{ width: `${(progress.current / progress.total) * 100}%` }}
                 aria-hidden="true"
               />
@@ -124,7 +117,6 @@ export const BulkSaveButton: React.FC<BulkSaveButtonProps> = ({
   return (
     <>
       <div className={cn("relative inline-flex shadow-sm", className)} ref={dropdownRef}>
-        {/* Main Save Button */}
         <Button
           type="button"
           onClick={() => handleSave('selected')}
@@ -133,7 +125,7 @@ export const BulkSaveButton: React.FC<BulkSaveButtonProps> = ({
             "rounded-r-none border-r-0 focus:z-10",
             mainButtonDisabled && "bg-muted text-muted-foreground opacity-50"
           )}
-          variant={mainButtonDisabled ? "secondary" : "default"} // Green styling is default/primary usually, or custom via className
+          variant={mainButtonDisabled ? "secondary" : "default"}
           title={mainButtonDisabled 
             ? (selectedCount === 0 ? 'Zaznacz co najmniej jedną propozycję' : 'Zapisywanie w toku')
             : `Zapisz zaznaczone fiszki (${selectedCount}) - Ctrl+S`
@@ -144,7 +136,6 @@ export const BulkSaveButton: React.FC<BulkSaveButtonProps> = ({
           Zapisz zaznaczone ({selectedCount})
         </Button>
 
-        {/* Dropdown Toggle */}
         <Button
           type="button"
           onClick={handleDropdownToggle}
@@ -161,7 +152,6 @@ export const BulkSaveButton: React.FC<BulkSaveButtonProps> = ({
           <ChevronDown className="h-4 w-4" />
         </Button>
 
-        {/* Dropdown Menu */}
         {isDropdownOpen && (
           <div className="absolute right-0 top-full mt-1 w-56 bg-popover border rounded-md shadow-lg z-50 animate-in fade-in-0 zoom-in-95">
             <div className="p-1">
@@ -193,12 +183,11 @@ export const BulkSaveButton: React.FC<BulkSaveButtonProps> = ({
         )}
       </div>
 
-      {/* Confirmation Dialog */}
       {showConfirmDialog && (
         <div className="fixed inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center z-50" role="dialog" aria-labelledby="confirm-dialog-title">
           <div className="bg-card border rounded-lg p-6 max-w-md mx-auto shadow-xl">
             <div className="flex items-center mb-4">
-              <AlertCircle className="h-6 w-6 text-yellow-600 mr-3" />
+              <AlertCircle className="h-6 w-6 text-yellow-600 dark:text-yellow-400 mr-3" />
               <h3 id="confirm-dialog-title" className="text-lg font-semibold">
                 Potwierdź zapis fiszek
               </h3>
@@ -226,7 +215,6 @@ export const BulkSaveButton: React.FC<BulkSaveButtonProps> = ({
         </div>
       )}
 
-      {/* Screen reader status */}
       <div 
         id="save-button-status"
         className="sr-only" 

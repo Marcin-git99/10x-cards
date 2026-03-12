@@ -27,7 +27,6 @@ export const ProposalsList: React.FC<ProposalsListProps> = ({
 }) => {
   const listRef = useRef<HTMLDivElement>(null);
 
-  // Scroll to results after generation
   useEffect(() => {
     if (proposals.length > 0 && listRef.current) {
       listRef.current.scrollIntoView({ 
@@ -37,14 +36,12 @@ export const ProposalsList: React.FC<ProposalsListProps> = ({
     }
   }, [proposals.length]);
 
-  // Handle bulk selection
   const handleBulkSelectAll = useCallback((checked: boolean | string) => {
     if (!disabled) {
       onBulkSelect(checked === true ? 'all' : 'none');
     }
   }, [disabled, onBulkSelect]);
 
-  // Handle keyboard navigation
   const handleKeyDown = useCallback((event: React.KeyboardEvent) => {
     if (event.ctrlKey || event.metaKey) {
       switch (event.key) {
@@ -72,13 +69,12 @@ export const ProposalsList: React.FC<ProposalsListProps> = ({
     }
   }, [disabled, onBulkSelect]);
 
-  // Empty state
   if (proposals.length === 0) {
     return (
       <div className={`text-center py-12 ${className}`}>
         <div className="max-w-sm mx-auto">
           <svg 
-            className="w-16 h-16 mx-auto mb-4 text-gray-300"
+            className="w-16 h-16 mx-auto mb-4 text-muted-foreground/40"
             fill="none" 
             stroke="currentColor" 
             viewBox="0 0 24 24"
@@ -91,7 +87,7 @@ export const ProposalsList: React.FC<ProposalsListProps> = ({
               d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
             />
           </svg>
-          <h3 className="text-lg font-medium text-gray-900 mb-2">
+          <h3 className="text-lg font-medium text-foreground mb-2">
             Brak propozycji fiszek
           </h3>
           <p className="text-muted-foreground">
@@ -112,8 +108,7 @@ export const ProposalsList: React.FC<ProposalsListProps> = ({
       aria-label="Lista propozycji fiszek"
       aria-describedby="proposals-help"
     >
-      {/* Header with bulk selection */}
-      <div className="flex items-center justify-between p-4 bg-gray-50 border border-gray-200 rounded-lg">
+      <div className="flex items-center justify-between p-4 bg-muted border border-border rounded-lg">
         <div className="flex items-center gap-4">
           <div className="flex items-center space-x-2">
             <Checkbox
@@ -123,7 +118,7 @@ export const ProposalsList: React.FC<ProposalsListProps> = ({
               disabled={disabled}
               aria-describedby="bulk-select-status"
             />
-            <Label htmlFor="bulk-select-checkbox" className="text-sm font-medium text-gray-700 cursor-pointer">
+            <Label htmlFor="bulk-select-checkbox" className="text-sm font-medium text-foreground cursor-pointer">
               Zaznacz wszystkie
             </Label>
           </div>
@@ -134,7 +129,7 @@ export const ProposalsList: React.FC<ProposalsListProps> = ({
               type="button"
               onClick={() => onBulkSelect('none')}
               disabled={disabled || bulkSelectionState.selectedCount === 0}
-              className="text-blue-600 hover:text-blue-800 disabled:text-gray-400 disabled:cursor-not-allowed transition-colors"
+              className="text-primary hover:text-primary/80 disabled:text-muted-foreground disabled:cursor-not-allowed transition-colors"
             >
               Odznacz wszystkie
             </button>
@@ -143,7 +138,7 @@ export const ProposalsList: React.FC<ProposalsListProps> = ({
               type="button"
               onClick={() => onBulkSelect('invert')}
               disabled={disabled}
-              className="text-blue-600 hover:text-blue-800 disabled:text-gray-400 disabled:cursor-not-allowed transition-colors"
+              className="text-primary hover:text-primary/80 disabled:text-muted-foreground disabled:cursor-not-allowed transition-colors"
             >
               Odwróć zaznaczenie
             </button>
@@ -161,7 +156,6 @@ export const ProposalsList: React.FC<ProposalsListProps> = ({
         </div>
       </div>
 
-      {/* Help text for keyboard shortcuts */}
       <div 
         id="proposals-help"
         className="text-xs text-muted-foreground px-1"
@@ -169,7 +163,6 @@ export const ProposalsList: React.FC<ProposalsListProps> = ({
         Skróty klawiszowe: Ctrl+A (zaznacz wszystkie), Ctrl+Shift+A (odznacz wszystkie), Ctrl+I (odwróć zaznaczenie)
       </div>
 
-      {/* Proposals list */}
       <div 
         className="space-y-3"
         role="list"
@@ -191,19 +184,17 @@ export const ProposalsList: React.FC<ProposalsListProps> = ({
         ))}
       </div>
 
-      {/* Summary footer */}
       <div className="text-center pt-6 pb-4">
         <p className="text-sm text-muted-foreground">
           Pokazano {proposals.length} {proposals.length === 1 ? 'propozycję' : 'propozycji'} fiszek
           {bulkSelectionState.selectedCount > 0 && (
-            <span className="ml-2 text-blue-600 font-medium">
+            <span className="ml-2 text-primary font-medium">
               • {bulkSelectionState.selectedCount} zaznaczonych
             </span>
           )}
         </p>
       </div>
 
-      {/* Screen reader announcements */}
       <div className="sr-only" aria-live="polite" aria-atomic="true">
         {bulkSelectionState.selectedCount === proposals.length && 'Wszystkie propozycje są zaznaczone'}
         {bulkSelectionState.selectedCount === 0 && proposals.length > 0 && 'Żadna propozycja nie jest zaznaczona'}

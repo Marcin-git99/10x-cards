@@ -36,7 +36,6 @@ export function CreateFlashcardModal({ open, onOpenChange, onCreate }: CreateFla
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Walidacja
     if (!front.trim()) {
       setError('Przód fiszki nie może być pusty');
       return;
@@ -90,7 +89,7 @@ export function CreateFlashcardModal({ open, onOpenChange, onCreate }: CreateFla
         <form onSubmit={handleSubmit}>
           <div className="px-6 space-y-4">
             {error && (
-              <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
+              <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-lg text-sm text-destructive">
                 {error}
               </div>
             )}
@@ -98,7 +97,7 @@ export function CreateFlashcardModal({ open, onOpenChange, onCreate }: CreateFla
             <div className="space-y-2">
               <Label htmlFor="create-front">
                 Przód (pytanie)
-                <span className="ml-2 text-xs text-gray-400">
+                <span className="ml-2 text-xs text-muted-foreground">
                   {front.length}/{MAX_FRONT_LENGTH}
                 </span>
               </Label>
@@ -111,14 +110,14 @@ export function CreateFlashcardModal({ open, onOpenChange, onCreate }: CreateFla
                 maxLength={MAX_FRONT_LENGTH}
                 disabled={isSaving}
                 autoFocus
-                className={front.length > MAX_FRONT_LENGTH ? 'border-red-500' : ''}
+                className={front.length > MAX_FRONT_LENGTH ? 'border-destructive' : ''}
               />
             </div>
             
             <div className="space-y-2">
               <Label htmlFor="create-back">
                 Tył (odpowiedź)
-                <span className="ml-2 text-xs text-gray-400">
+                <span className="ml-2 text-xs text-muted-foreground">
                   {back.length}/{MAX_BACK_LENGTH}
                 </span>
               </Label>
@@ -130,7 +129,7 @@ export function CreateFlashcardModal({ open, onOpenChange, onCreate }: CreateFla
                 rows={4}
                 maxLength={MAX_BACK_LENGTH}
                 disabled={isSaving}
-                className={back.length > MAX_BACK_LENGTH ? 'border-red-500' : ''}
+                className={back.length > MAX_BACK_LENGTH ? 'border-destructive' : ''}
               />
             </div>
           </div>
@@ -147,7 +146,7 @@ export function CreateFlashcardModal({ open, onOpenChange, onCreate }: CreateFla
             <Button
               type="submit"
               disabled={isSaving || !front.trim() || !back.trim()}
-              className="bg-emerald-600 hover:bg-emerald-700"
+              className="bg-emerald-600 hover:bg-emerald-700 dark:bg-emerald-600 dark:hover:bg-emerald-500"
             >
               {isSaving ? 'Tworzenie...' : 'Utwórz fiszkę'}
             </Button>
@@ -157,4 +156,3 @@ export function CreateFlashcardModal({ open, onOpenChange, onCreate }: CreateFla
     </Dialog>
   );
 }
-

@@ -19,10 +19,10 @@ export function FlashcardCard({ flashcard, onEdit, onDelete }: FlashcardCardProp
   }[flashcard.source] || flashcard.source;
   
   const sourceColor = {
-    'ai-full': 'bg-emerald-100 text-emerald-700',
-    'ai-edited': 'bg-blue-100 text-blue-700',
-    'manual': 'bg-gray-100 text-gray-700'
-  }[flashcard.source] || 'bg-gray-100 text-gray-700';
+    'ai-full': 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300',
+    'ai-edited': 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300',
+    'manual': 'bg-muted text-muted-foreground'
+  }[flashcard.source] || 'bg-muted text-muted-foreground';
 
   const handleDeleteClick = () => {
     setShowDeleteConfirm(true);
@@ -40,7 +40,6 @@ export function FlashcardCard({ flashcard, onEdit, onDelete }: FlashcardCardProp
   return (
     <Card data-testid="flashcard-card" className="group hover:shadow-md transition-shadow">
       <CardContent className="p-5">
-        {/* Header with source badge and actions */}
         <div className="flex items-start justify-between mb-4">
           <span className={`text-xs font-medium px-2 py-1 rounded-full ${sourceColor}`}>
             {sourceLabel}
@@ -63,7 +62,7 @@ export function FlashcardCard({ flashcard, onEdit, onDelete }: FlashcardCardProp
                 variant="ghost"
                 size="sm"
                 onClick={handleDeleteClick}
-                className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
+                className="h-8 w-8 p-0 text-destructive hover:text-destructive hover:bg-destructive/10"
                 aria-label="Usuń fiszkę"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -74,10 +73,9 @@ export function FlashcardCard({ flashcard, onEdit, onDelete }: FlashcardCardProp
           )}
         </div>
         
-        {/* Delete confirmation */}
         {showDeleteConfirm && (
-          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
-            <p className="text-sm text-red-800 mb-3">Czy na pewno chcesz usunąć tę fiszkę?</p>
+          <div className="mb-4 p-3 bg-destructive/10 border border-destructive/20 rounded-lg">
+            <p className="text-sm text-destructive mb-3">Czy na pewno chcesz usunąć tę fiszkę?</p>
             <div className="flex gap-2">
               <Button
                 variant="destructive"
@@ -97,24 +95,20 @@ export function FlashcardCard({ flashcard, onEdit, onDelete }: FlashcardCardProp
           </div>
         )}
         
-        {/* Front (question) */}
         <div className="mb-4">
-          <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">Przód</span>
-          <p className="mt-1 text-gray-900 font-medium">{flashcard.front}</p>
+          <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Przód</span>
+          <p className="mt-1 text-foreground font-medium">{flashcard.front}</p>
         </div>
         
-        {/* Divider */}
-        <div className="border-t border-gray-100 my-3" />
+        <div className="border-t border-border my-3" />
         
-        {/* Back (answer) */}
         <div>
-          <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">Tył</span>
-          <p className="mt-1 text-gray-700">{flashcard.back}</p>
+          <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Tył</span>
+          <p className="mt-1 text-foreground/80">{flashcard.back}</p>
         </div>
         
-        {/* Footer with date */}
-        <div className="mt-4 pt-3 border-t border-gray-100">
-          <span className="text-xs text-gray-400">
+        <div className="mt-4 pt-3 border-t border-border">
+          <span className="text-xs text-muted-foreground">
             {new Date(flashcard.created_at).toLocaleDateString('pl-PL', {
               day: 'numeric',
               month: 'short',
@@ -126,4 +120,3 @@ export function FlashcardCard({ flashcard, onEdit, onDelete }: FlashcardCardProp
     </Card>
   );
 }
-

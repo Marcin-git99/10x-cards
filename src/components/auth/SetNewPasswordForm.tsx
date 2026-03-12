@@ -70,7 +70,6 @@ export default function SetNewPasswordForm({ accessToken, refreshToken }: SetNew
           setPassword('');
           setConfirmPassword('');
           
-          // Redirect to login after 2 seconds
           setTimeout(() => {
             window.location.href = '/auth/login';
           }, 2000);
@@ -99,24 +98,24 @@ export default function SetNewPasswordForm({ accessToken, refreshToken }: SetNew
       )}
 
       {success && (
-        <Alert className="bg-green-50 border-green-200 py-3">
-          <AlertDescription className="text-green-700">{success}</AlertDescription>
+        <Alert className="bg-emerald-50 border-emerald-200 dark:bg-emerald-950/30 dark:border-emerald-800 py-3">
+          <AlertDescription className="text-emerald-700 dark:text-emerald-300">{success}</AlertDescription>
         </Alert>
       )}
 
       <div className="space-y-2">
-        <Label htmlFor="password" className="text-sm font-semibold text-gray-700">
+        <Label htmlFor="password" className="text-sm font-semibold text-foreground">
           Nowe hasło
         </Label>
         <div className="relative">
-          <Lock className="absolute left-3 top-3.5 h-4 w-4 text-gray-400" />
+          <Lock className="absolute left-3 top-3.5 h-4 w-4 text-muted-foreground" />
           <Input
             id="password"
             name="password"
             type="password"
             autoComplete="new-password"
             placeholder="Minimum 8 znaków"
-            className="pl-10 h-11 border-gray-200 focus:border-black focus:ring-0 focus-visible:ring-0 transition-all"
+            className="pl-10 h-11 border-input focus:border-foreground focus:ring-0 focus-visible:ring-0 transition-all"
             value={password}
             onChange={(e) => {
               setPassword(e.target.value);
@@ -126,23 +125,23 @@ export default function SetNewPasswordForm({ accessToken, refreshToken }: SetNew
           />
         </div>
         {fieldErrors.password && (
-          <p className="text-xs text-red-500 mt-1">{fieldErrors.password}</p>
+          <p className="text-xs text-destructive mt-1">{fieldErrors.password}</p>
         )}
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="confirmPassword" className="text-sm font-semibold text-gray-700">
+        <Label htmlFor="confirmPassword" className="text-sm font-semibold text-foreground">
           Potwierdź nowe hasło
         </Label>
         <div className="relative">
-          <Lock className="absolute left-3 top-3.5 h-4 w-4 text-gray-400" />
+          <Lock className="absolute left-3 top-3.5 h-4 w-4 text-muted-foreground" />
           <Input
             id="confirmPassword"
             name="confirmPassword"
             type="password"
             autoComplete="new-password"
             placeholder="Powtórz hasło"
-            className="pl-10 h-11 border-gray-200 focus:border-black focus:ring-0 focus-visible:ring-0 transition-all"
+            className="pl-10 h-11 border-input focus:border-foreground focus:ring-0 focus-visible:ring-0 transition-all"
             value={confirmPassword}
             onChange={(e) => {
               setConfirmPassword(e.target.value);
@@ -152,24 +151,23 @@ export default function SetNewPasswordForm({ accessToken, refreshToken }: SetNew
           />
         </div>
         {fieldErrors.confirmPassword && (
-          <p className="text-xs text-red-500 mt-1">{fieldErrors.confirmPassword}</p>
+          <p className="text-xs text-destructive mt-1">{fieldErrors.confirmPassword}</p>
         )}
       </div>
 
       <Button
         type="submit"
-        className="w-full h-11 bg-gray-900 hover:bg-black text-white font-semibold rounded-md transition-all"
+        className="w-full h-11 font-semibold rounded-md transition-all"
         disabled={isLoading || !!success}
       >
         {isLoading ? 'Zapisywanie...' : 'Ustaw nowe hasło'}
       </Button>
 
-      <div className="text-center text-sm text-gray-500 pt-2">
-        <a href="/auth/login" className="font-semibold text-gray-900 hover:underline">
+      <div className="text-center text-sm text-muted-foreground pt-2">
+        <a href="/auth/login" className="font-semibold text-foreground hover:underline">
           Powrót do logowania
         </a>
       </div>
     </form>
   );
 }
-
