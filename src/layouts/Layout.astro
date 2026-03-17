@@ -24,7 +24,7 @@ const user = Astro.locals.user;
 		<title>{title}</title>
 		<script is:inline>
 			(function(){
-				var t = localStorage.getItem('theme');
+				const t = localStorage.getItem('theme');
 				if (t === 'dark' || (!t && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
 					document.documentElement.classList.add('dark');
 				}
